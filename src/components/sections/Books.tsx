@@ -6,12 +6,12 @@ import {
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
-  } from "@/components/ui/pagination"
+} from "@/components/ui/pagination"
 import Link from "next/link";
 
-const MAX_PAGINATION = 3;
-  
-async function getBooks(search:string) {
+const MAX_PAGINATION = 5;
+
+async function getBooks(search: string) {
     const response = await fetch(
         `${process.env.APP_URL}/api/books${search ? `?title=${search}` : ""}`,
         { cache: "no-store" }
@@ -19,19 +19,24 @@ async function getBooks(search:string) {
     return response.json();
 }
 
-export default async function Books ({ pageNumber, maxPerPage, search }:any) {
+export default async function Books({ pageNumber, maxPerPage, search }: any) {
     const books = await getBooks(search);
     const currentPage = Number(pageNumber);
     const start = (currentPage - 1) * maxPerPage;
     const end = start + maxPerPage;
     const paginatedBooks = books.slice(start, end);
     const maxPages = Math.ceil(books.length / maxPerPage);
-    
+
     function getPaginationRange() {
-        const range = [];
-        for (let i = 1; i <= maxPages; i++) {
+        let range = [];
+
+        const a = Math.max(1, Math.min(currentPage - 1, maxPages - MAX_PAGINATION));
+        const b = Math.min(a + MAX_PAGINATION, maxPages);
+
+        for (let i = a; i <= b; i++) {
             range.push(i);
         }
+
         return range;
     }
 
@@ -43,48 +48,52 @@ export default async function Books ({ pageNumber, maxPerPage, search }:any) {
         );
     }
 
+    let paginationRange = getPaginationRange();
+
     return (
-      <div className="flex flex-col gap-10">
-        <div>
-            {paginatedBooks.map((book:any) => (
-                <Link href={`/book/${book.id}`} passHref>
-                    <div key={book.id} className="flex flex-row justify-between p-4 border-b-2 ">
-                        <div className="flex flex-row">
-                            <img src={book.imageUrl} alt={book.title} className="w-24 h-32" />
-                            <div className="flex flex-col ml-4">
-                                <h2 className="text-xl font-bold">{book.title}</h2>
-                                <p className="text-m">{book.author}</p>
-                                <p className="text-sm">{book.description}</p>
+        <div className="flex flex-col gap-10">
+            <div>
+                {paginatedBooks.map((book: any) => (
+                    <Link href={`/book/${book.id}`} passHref>
+                        <div key={book.id} className="flex flex-row justify-between p-4 border-b-2 ">
+                            <div className="flex flex-row">
+                                <img src={book.imageUrl} alt={book.title} className="w-24 h-32" />
+                                <div className="flex flex-col ml-4">
+                                    <h2 className="text-xl font-bold">{book.title}</h2>
+                                    <p className="text-m">{book.author}</p>
+                                    <p className="text-sm">{book.description}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </Link>
-            ))}
+                    </Link>
+                ))}
+            </div>
+
+            <Pagination>
+                <PaginationContent>
+                    <PaginationItem>
+                        <PaginationPrevious href={currentPage === 1 ? "#" : `/?page=${currentPage - 1}`} />
+                    </PaginationItem>
+
+                    {!paginationRange.includes(1) && <PaginationEllipsis />}
+
+                    {paginationRange.map((number, index) => {
+                        const page = number;
+                        return (
+                            <PaginationItem key={index}>
+                                <PaginationLink href={currentPage === page ? "#" : `/?page=${page}`} isActive={currentPage === page}>
+                                    {number}
+                                </PaginationLink>
+                            </PaginationItem>
+                        );
+                    })}
+
+                    {!paginationRange.includes(maxPages) && < PaginationEllipsis />}
+                    <PaginationItem>
+                        <PaginationNext href={currentPage === maxPages ? "#" : `/?page=${currentPage + 1}`} />
+                    </PaginationItem>
+                </PaginationContent>
+            </Pagination>
         </div>
-
-        <Pagination>
-            <PaginationContent>
-                <PaginationItem>
-                <PaginationPrevious href={currentPage === 1 ? "#" : `/?page=${currentPage - 1}`} />
-                </PaginationItem>
-                
-                {getPaginationRange().map((_, index) => {
-                    const page = index + 1;
-                    return (
-                        <PaginationItem key={index}>
-                        <PaginationLink href={currentPage === page ? "#" : `/?page=${page}`} isActive={currentPage === page}>
-                            {index + 1}
-                        </PaginationLink>
-                        </PaginationItem>
-                    );
-                })}
-
-
-                <PaginationItem>
-                <PaginationNext href={currentPage === maxPages ? "#" : `/?page=${currentPage + 1}`} />
-                </PaginationItem>
-            </PaginationContent>
-        </Pagination>
-      </div>
     )
-  }
+}
