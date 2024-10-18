@@ -22,7 +22,11 @@ npx prisma db push
 ```
 Generate Prisma Client with the following command:
 ```bash
-prisma generate
+npx prisma generate
+```
+Populate the database:
+```bash
+npx prisma db seed
 ```
 Finally run the development server:
 ```bash
