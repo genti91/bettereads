@@ -16,7 +16,7 @@ DATABASE_URL="postgresql://USER_HERE:PASSWORD_HERE@localhost:5432/bettereads"
 APP_URL="http://localhost:3000"
 ```
 
-Then synchronize the Prisma schema with your database.
+Create the "bettereads" database in Postgres and then then synchronize the Prisma schema with your database.
 ```bash
 npx prisma db push
 ```
