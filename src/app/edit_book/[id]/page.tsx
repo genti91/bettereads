@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
     title: z.string(),
@@ -27,6 +28,7 @@ const formSchema = z.object({
 
 export default function EditBook({ params }: { params: { id: string } }) {
     const { toast } = useToast()
+    const router = useRouter();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -67,7 +69,7 @@ export default function EditBook({ params }: { params: { id: string } }) {
                 description: "Book updated successfully"
               })
             form.reset()
-            location.reload();
+            router.back();
         } else {
             toast({
                 variant: "destructive",
