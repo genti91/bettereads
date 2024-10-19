@@ -14,6 +14,7 @@ Add the required environment variables to the .env file in the root folder.
 ```bash
 DATABASE_URL="postgresql://USER_HERE:PASSWORD_HERE@localhost:5432/bettereads"
 APP_URL="http://localhost:3000"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
 Create the "bettereads" database in Postgres and then then synchronize the Prisma schema with your database.

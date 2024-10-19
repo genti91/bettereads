@@ -1,6 +1,7 @@
 import Link from "next/link";
 import SearchBar from "../SearchBar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import ProfileIconMenue from "../ProfileIconMenue";
 
 
 export default function NavBar () {
@@ -16,12 +17,7 @@ export default function NavBar () {
             </Link>
           <div className="flex items-center gap-6">
             <SearchBar />
-            <Link href="/profile">
-              <Avatar className="bg-slate-200 items-center justify-center">
-                <AvatarImage src="https://cdn3.iconfinder.com/data/icons/toolbar-people/512/reader_acrobat_adobe_rss_news_google_feed-512.png" className="size-[70%]"/>
-                <AvatarFallback>Profile</AvatarFallback>
-              </Avatar>
-            </Link>
+            <ProfileIconMenue />
           </div>
         </div>
     </nav>

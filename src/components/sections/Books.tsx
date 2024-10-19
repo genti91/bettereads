@@ -53,8 +53,8 @@ export default async function Books({ pageNumber, maxPerPage, search }: any) {
     return (
         <div className="flex flex-col gap-10">
             <div>
-                {paginatedBooks.map((book: any) => (
-                    <Link href={`/book/${book.id}`} passHref>
+                {paginatedBooks.map((book: any, index:number) => (
+                    <Link href={`/book/${book.id}`} passHref key={book.id}>
                         <div key={book.id} className="flex flex-row justify-between p-4 border-b-2 ">
                             <div className="flex flex-row">
                                 <img src={book.imageUrl} alt={book.title} className="w-24 h-32" />
