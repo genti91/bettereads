@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
+import { useEffect } from 'react';
 
 const formSchema = z.object({
     title: z.string(),
@@ -35,6 +36,21 @@ export default function EditBook({ params }: { params: { id: string } }) {
             imageUrl: "",
         },
     })
+    useEffect(() => {
+        const fetchBook = async () => {
+            const response = await fetch(`/api/books/${params.id}`);
+            if (response.ok) {
+                const bookData = await response.json();
+                form.reset(bookData);
+            } else {
+                toast({
+                    variant: "destructive",
+                    description: "Error loading book data",
+                });
+            }
+        };
+        fetchBook();
+    }, [params.id, form, toast]);
     async function onSubmit(values: z.infer<typeof formSchema>) {
         const body = Object.fromEntries(
           Object.entries(values).filter(([_, value]) => value !== "")
