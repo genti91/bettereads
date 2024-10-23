@@ -33,7 +33,6 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { useState, useEffect } from "react"
-import { prisma } from "@/lib/prisma";
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -186,7 +185,11 @@ export default function Page() {
                                     <FormItem>
                                         <FormLabel>Page Amount</FormLabel>
                                         <FormControl>
-                                            <Input type="number" placeholder="Page Amount" {...field} />
+                                            <Input 
+                                                type="number"
+                                                placeholder="Page Amount" {...field}
+                                                onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
