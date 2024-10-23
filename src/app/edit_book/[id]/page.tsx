@@ -18,6 +18,8 @@ import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { revalidatePath } from "next/cache"
+import { revalidateAll } from "@/lib/actions"
 
 const formSchema = z.object({
     title: z.string(),
@@ -26,7 +28,7 @@ const formSchema = z.object({
     imageUrl: z.string(),
   })
 
-export default function EditBook({ params }: { params: { id: string } }) {
+export default function EditBook({ params, searchParams }: { params: { id: string }, searchParams: { [key: string]: string | string[] | undefined } }) {
     const { toast } = useToast()
     const router = useRouter();
     const form = useForm<z.infer<typeof formSchema>>({
@@ -69,7 +71,9 @@ export default function EditBook({ params }: { params: { id: string } }) {
                 description: "Book updated successfully"
               })
             form.reset()
-            router.back();
+            console.log(response);
+            revalidateAll(`/my_books/?page=` + (searchParams["page"] ?? '1'));
+            
         } else {
             toast({
                 variant: "destructive",
@@ -79,7 +83,7 @@ export default function EditBook({ params }: { params: { id: string } }) {
     }
   return (
     <div className="sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
-        <Link href="/my_books">
+        <Link href={`/my_books/?page=` + (searchParams["page"] ?? '1')}>
             <Button>Go Back</Button>
         </Link>
         <div className="flex flex-col items-center">

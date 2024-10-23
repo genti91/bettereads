@@ -11,13 +11,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "./ui/button"
+import { revalidateAll } from "@/lib/actions";
 
 export default function DeleteBookButton({ bookId }: any) {
   async function deleteBook() {
     await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/books/${bookId}`, {
       method: "DELETE",
     });
-    location.reload();
+    revalidateAll();
   }
   return (
     <AlertDialog>

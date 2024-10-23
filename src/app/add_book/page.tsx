@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
+import { revalidateAll } from "@/lib/actions"
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -47,7 +48,8 @@ export default function Page() {
             toast({
                 description: "Book added successfully"
               })
-            form.reset()
+            form.reset();
+            revalidateAll();
         } else {
             toast({
                 variant: "destructive",
