@@ -25,6 +25,16 @@ export default async function Book({ params }: { params: { id: string } }) {
         <h2 className="text-3xl font-bold">{book.title}</h2>
         <p className="text-2xl">{book.author}</p>
         <p className="text-lg">{book.description}</p>
+        <p className="text-lg">{"Page Amount: " + book.pageAmount}</p>
+        <p className="text-lg">{"Editorial: "+book.editorial}</p>
+        <div className="flex gap-2">
+          <p className="text-lg">{"Genres: "}</p>
+          {book.genres.map((genre: string ) => (
+            <span key={genre} className="text-sm bg-gray-200 px-2 py-1 rounded-full">
+              {genre}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );

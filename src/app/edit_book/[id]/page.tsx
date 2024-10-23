@@ -16,16 +16,33 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { revalidatePath } from "next/cache"
 import { revalidateAll } from "@/lib/actions"
+import { Check, ChevronsUpDown } from "lucide-react"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command"
+import { cn } from "@/lib/utils"
 
 const formSchema = z.object({
     title: z.string(),
     author: z.string(),
     description: z.string(),
     imageUrl: z.string(),
+    editorial: z.string().min(1, "Editorial name is required"),
+    pageAmount: z.number().min(1, "Page amount is required"),
   })
 
 export default function EditBook({ params, searchParams }: { params: { id: string }, searchParams: { [key: string]: string | string[] | undefined } }) {
@@ -38,14 +55,21 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
             author: "",
             description: "",
             imageUrl: "",
+            editorial: "",
+            pageAmount: 0,
         },
     })
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState("");
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+    const [genres, setGenres] = useState([]) as any;
     useEffect(() => {
         const fetchBook = async () => {
             const response = await fetch(`/api/books/${params.id}`);
             if (response.ok) {
                 const bookData = await response.json();
                 form.reset(bookData);
+                setSelectedGenres(bookData.genres);
             } else {
                 toast({
                     variant: "destructive",
@@ -54,6 +78,19 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
             }
         };
         fetchBook();
+        const fetchGenres = async () => {
+            const response = await fetch(`/api/genres`);
+            if (response.ok) {
+                const genresData = await response.json();
+                setGenres(genresData);
+            } else {
+                toast({
+                    variant: "destructive",
+                    description: "Error loading genres data",
+                });
+            }
+        };
+        fetchGenres();
     }, [params.id, form, toast]);
     async function onSubmit(values: z.infer<typeof formSchema>) {
         const body = Object.fromEntries(
@@ -64,7 +101,7 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(body),
+            body: JSON.stringify({...body, genres: selectedGenres}),
         })
         if (response.ok) {
             toast({
@@ -80,6 +117,9 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
                 description: "An error occurred"
               })
         }
+    }
+    function formatGenre(string: string) {
+        return string[0] + string.slice(1).toLowerCase();
     }
   return (
     <div className="sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
@@ -142,6 +182,100 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
                             </FormItem>
                         )}
                         />
+                        <FormField
+                                control={form.control}
+                                name="editorial"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Editorial</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Editorial" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="pageAmount"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Page Amount</FormLabel>
+                                        <FormControl>
+                                            <Input 
+                                                type="number"
+                                                placeholder="Page Amount" {...field}
+                                                onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormItem>
+                                <FormLabel>Genres</FormLabel>
+                            </FormItem>
+                            <Popover open={open} onOpenChange={setOpen}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        aria-expanded={open}
+                                        className="w-[200px] justify-between"
+                                    >
+                                        {value
+                                            ? formatGenre(genres.find((genre: string) => genre === value))
+                                            : "Select genre..."}
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[200px] p-0">
+                                    <Command>
+                                        <CommandInput placeholder="Search genre..." />
+                                        <CommandList>
+                                            <CommandEmpty>No genre found.</CommandEmpty>
+                                            <CommandGroup>
+                                                {genres.map((genre: any) => (
+                                                    <CommandItem
+                                                        key={genre}
+                                                        value={genre}
+                                                        onSelect={(currentValue) => {
+                                                            setValue(currentValue === value ? "" : currentValue)
+                                                            setOpen(false)
+                                                            setSelectedGenres([...selectedGenres, currentValue])
+                                                        }}
+                                                    >
+                                                        <Check
+                                                            className={cn(
+                                                                "mr-2 h-4 w-4",
+                                                                value === genre ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                        {formatGenre(genre)}
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
+                            <div className="flex flex-wrap gap-2">
+                                {selectedGenres.map((genre) => (
+                                    <button onClick={() => {
+                                        if (genre === value) {
+                                            setValue("");
+                                        }
+                                        setSelectedGenres(selectedGenres.filter((selectedGenre) => selectedGenre !== genre));
+                                    }}>
+                                        <span
+                                            key={genre}
+                                            className="px-2 py-1 bg-gray-100 rounded-full"
+                                        >
+                                            {formatGenre(genre)}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
                     </div>
                     <Button type="submit" >Submit</Button>
                 </form>
