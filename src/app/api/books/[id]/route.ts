@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
-    let book = await prisma.book.findUnique({where: { id: params.id }})
+    let book = await prisma.book.findUnique({
+        where: { id: params.id },
+        include: { genres: true }
+    })
     return Response.json(book);
 }
 

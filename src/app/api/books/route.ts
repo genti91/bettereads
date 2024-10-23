@@ -17,6 +17,16 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
     const body = await req.json();
-    const book = await prisma.book.create({ data: body });
+    const genres = body.genres.map((genreName: string) => ({
+        name: genreName
+    }));
+    const book = await prisma.book.create({ 
+        data: {
+            ...body,
+            genres: {
+                connect: genres
+            }
+        }
+    });
     return Response.json(book);
 }
