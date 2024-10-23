@@ -12,5 +12,5 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
     const genres = await prisma.genre.findMany();
-    return Response.json(genres);
+    return Response.json(genres.map(genre => genre.name));
 }
