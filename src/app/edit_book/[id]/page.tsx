@@ -35,6 +35,7 @@ import {
     CommandList,
 } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
+import { FaCircleXmark } from "react-icons/fa6";
 
 const formSchema = z.object({
     title: z.string(),
@@ -269,9 +270,11 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
                                     }}>
                                         <span
                                             key={genre}
-                                            className="px-2 py-1 bg-gray-100 rounded-full"
                                         >
-                                            {formatGenre(genre)}
+                                            <div className="flex items-center px-2 py-1 bg-gray-100 rounded-full gap-2">
+                                                {formatGenre(genre)} 
+                                                <FaCircleXmark/>
+                                            </div>
                                         </span>
                                     </button>
                                 ))}
