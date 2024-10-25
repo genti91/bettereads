@@ -19,6 +19,9 @@ model Book {
   author      String
   description String
   imageUrl    String
+  pageAmount  Int
+  editorial   String
+  genres      Genre[]  @relation("BookGenres")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -36,4 +39,10 @@ model User {
   username String
   password String
   reviews  Review[]
+}
+
+model Genre {
+  id     String   @id @default(cuid())
+  name   String   @unique
+  books  Book[]   @relation("BookGenres")
 }

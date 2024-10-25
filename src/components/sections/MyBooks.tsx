@@ -69,7 +69,7 @@ export default async function MyBooks({ pageNumber, maxPerPage, search }: any) {
                         </div>
                         </Link>
                         <div className="flex flex-col gap-4">
-                          <Link className="w-full" href={`edit_book/${book.id}`}>
+                          <Link className="w-full" href={`edit_book/${book.id}/?page=${currentPage}`}>
                             <Button className=" w-full">Edit</Button>
                           </Link>
                           <DeleteBookButton bookId={book.id} />

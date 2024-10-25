@@ -8,7 +8,15 @@ async function main() {
     await prisma.book.upsert({
         where: { id: book.id },
         update: {},
-        create: book
+        create: {
+          ...book,
+          genres: {
+            connectOrCreate: book.genres.map((genreName: string) => ({
+              where: { name: genreName },
+              create: { name: genreName }
+            }))
+          }
+        }
     })
   }
 }
