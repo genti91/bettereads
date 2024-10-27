@@ -2,7 +2,6 @@ import Reviews from "@/components/Reviews";
 import Books from "@/components/sections/Books";
 
 async function getBook(id: string) {
-  console.log(id);
   const response = await fetch(
     `${process.env.APP_URL}/api/books/${id}`,
     { cache: "no-store" }

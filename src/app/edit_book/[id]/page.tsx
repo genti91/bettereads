@@ -109,7 +109,6 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
                 description: "Book updated successfully"
               })
             form.reset()
-            console.log(response);
             revalidateAll(`/my_books/?page=` + (searchParams["page"] ?? '1'));
             
         } else {

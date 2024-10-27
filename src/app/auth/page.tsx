@@ -12,9 +12,10 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { signIn } from "next-auth/react"
 
 const formSchema = z.object({
-    user_name: z.string().min(1, "user_name is required"),
+    username: z.string().min(1, "username is required"),
     password: z.string().min(1, "password is required")
   })
 
@@ -22,40 +23,24 @@ export default function SignIn({ params, searchParams }: { params: { id: string 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            user_name: "",
+            username: "",
             password: ""
         },
     })
     
     async function onSubmit(values: z.infer<typeof formSchema>) {
-    //     const body = Object.fromEntries(
-    //       Object.entries(values).filter(([_, value]) => value !== "")
-    //     )
-    //     const response = await fetch("/api/books/" + params.id, {
-    //         method: "PUT",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify({...body, genres: selectedGenres}),
-    //     })
-    //     if (response.ok) {
-    //         toast({
-    //             description: "Book updated successfully"
-    //           })
-    //         form.reset()
-    //         console.log(response);
-    //         revalidateAll(`/my_books/?page=` + (searchParams["page"] ?? '1'));
-            
-    //     } else {
-    //         toast({
-    //             variant: "destructive",
-    //             description: "An error occurred"
-    //           })
-    //     }
-    // }
-
-    // function formatGenre(string: string) {
-    //     return string[0] + string.slice(1).toLowerCase();
+      const res = await signIn("credentials", {
+        redirect: false,
+        username: values.username,
+        password: values.password,
+      })
+    
+      if (res?.ok) {
+        window.location.href = "/profile"
+      } else {
+        alert("Usuario o contraseña incorrectos")
+        window.location.href = "/auth"
+      }
     }
   return (
     <div className="sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
@@ -66,7 +51,7 @@ export default function SignIn({ params, searchParams }: { params: { id: string 
 
                         <FormField 
                         control={form.control}
-                        name="user_name"
+                        name="username"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>User Name</FormLabel>
