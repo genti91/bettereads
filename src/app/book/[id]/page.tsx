@@ -38,7 +38,7 @@ export default async function Book({ params }: { params: { id: string } }) {
           </div>
         </div>
       </div>
-      <Reviews />
+      <Reviews reviews={book.reviews} bookId={params.id}/>
     </div>
   );
 }

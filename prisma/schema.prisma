@@ -22,6 +22,7 @@ model Book {
   pageAmount  Int
   editorial   String
   genres      Genre[]  @relation("BookGenres")
+  reviews     Review[]
   userId      Int
   user        User     @relation(fields: [userId], references: [id], name: "BookUser")
   createdAt   DateTime @default(now())
@@ -29,11 +30,13 @@ model Book {
 }
 
 model Review {
-  id          String @id @default(cuid())
+  id          String  @id @default(cuid())
   rating      Float
   description String
-  user        User   @relation(references: [id], fields: [userId])
+  user        User    @relation(references: [id], fields: [userId])
   userId      Int
+  Book        Book   @relation(fields: [bookId], references: [id])
+  bookId      String
 }
 
 model User {

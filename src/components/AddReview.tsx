@@ -19,17 +19,17 @@ import { useState } from "react";
 
 const formSchema = z.object({
     rating: z.number().min(1, "La clasificación es requerida").max(5, "La clasificación no puede ser mayor a 5"),
-    review: z.string(),
+    description: z.string(),
 })
 
-export function AddReveiew() {
+export function AddReveiew({userId, bookId}:any) {
     const [open, setOpen] = useState(false)
     const { toast } = useToast()
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             rating: 0,
-            review: ""
+            description: ""
         },
     })
 
@@ -39,7 +39,7 @@ export function AddReveiew() {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(values),
+            body: JSON.stringify({...values, userId, bookId}),
         })
         if (response.ok) {
             toast({
@@ -81,7 +81,7 @@ export function AddReveiew() {
                     />
                     <FormField
                         control={form.control}
-                        name="review"
+                        name="description"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Reseña</FormLabel>

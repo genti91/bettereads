@@ -10,16 +10,18 @@ import {
     CardTitle,
   } from "@/components/ui/card"
 import { AddReveiew } from "./AddReview"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
-
-export default function Reviews() {
+export default async function Reviews({reviews, bookId}:any) {
+    const session = await getServerSession(authOptions)
     return (
         <div className="flex flex-col gap-4">
             <h1 className="font-[500] text-2xl">Opiniones del libro</h1>
             <div className="flex gap-8">
                 <div className="flex flex-col gap-3">
-                    <div className="flex gap-2 items-center">
-                        <h1 className="text-4xl font-bold" >4.7</h1>
+                    <div className="flex gap-4 items-center">
+                        <h1 className="text-4xl font-bold" >4</h1>
                         <div className="flex flex-col gap-0">
                             <div className="flex gap-2">
                                 <StarFilledIcon/>
@@ -32,15 +34,15 @@ export default function Reviews() {
                         </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                        {[5, 4, 3, 2, 1].map((rating) => (
+                        {reviews.map((rating:any, index:number) => (
                             <div className="flex gap-2 items-center">
-                                <Progress className="h-1" value={rating * 20} />
-                                <p className="text-xs text-gray-500">{rating}</p>
+                                <Progress className="h-1" value={index * 20} />
+                                <p className="text-xs text-gray-500">{index}</p>
                                 <StarFilledIcon color="gray"/>
                             </div>
                         ))}
                     </div>
-                    <AddReveiew />
+                    {session && <AddReveiew userId={session.user?.id} bookId={bookId}/>}
                 </div>
                 <Tabs defaultValue="Todos" className="w-[400px]">
                     <TabsList>
