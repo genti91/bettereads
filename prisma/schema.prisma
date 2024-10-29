@@ -22,27 +22,34 @@ model Book {
   pageAmount  Int
   editorial   String
   genres      Genre[]  @relation("BookGenres")
+  reviews     Review[]
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], name: "BookUser")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
 model Review {
-  id          String @id @default(cuid())
+  id          String  @id @default(cuid())
   rating      Float
   description String
-  User        User   @relation(references: [id], fields: [userId])
-  userId      String
+  user        User    @relation(references: [id], fields: [userId])
+  userId      Int
+  Book        Book   @relation(fields: [bookId], references: [id])
+  bookId      String
+  createdAt   DateTime @default(now())
 }
 
 model User {
-  id       String   @id @default(cuid())
-  username String
+  id       Int      @id @default(autoincrement())
+  username String   @unique
   password String
-  reviews  Review[]
+  books    Book[]   @relation("BookUser")
+  Review   Review[]
 }
 
 model Genre {
-  id     String   @id @default(cuid())
-  name   String   @unique
-  books  Book[]   @relation("BookGenres")
+  id    String @id @default(cuid())
+  name  String @unique
+  books Book[] @relation("BookGenres")
 }
