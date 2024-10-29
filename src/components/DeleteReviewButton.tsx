@@ -13,11 +13,12 @@ import {
 import { Button } from "./ui/button"
 import { revalidateAll } from "@/lib/actions";
 
-export default function DeleteBookButton({ bookId }: any) {
+export default function DeleteReviewButton({ reviewId, onClick }: any) {
   async function deleteBook() {
-    await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/books/${bookId}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/reviews/${reviewId}`, {
       method: "DELETE",
     });
+    onClick();
     revalidateAll();
   }
   return (
@@ -29,8 +30,8 @@ export default function DeleteBookButton({ bookId }: any) {
         <AlertDialogHeader>
           <AlertDialogTitle>¿Estás completamente seguro?</AlertDialogTitle>
           <AlertDialogDescription>
-            Esta acción no se puede deshacer. Eliminará permanentemente su
-            libro y eliminará sus datos de nuestros servidores.
+            Esta acción no se puede deshacer. Esto eliminará permanentemente su
+            reseña y eliminará sus datos de nuestros servidores.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
