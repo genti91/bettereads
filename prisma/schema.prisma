@@ -37,6 +37,7 @@ model Review {
   userId      Int
   Book        Book   @relation(fields: [bookId], references: [id])
   bookId      String
+  createdAt   DateTime @default(now())
 }
 
 model User {

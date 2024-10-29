@@ -16,6 +16,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { useState } from "react";
+import { revalidateAll } from "@/lib/actions";
 
 const formSchema = z.object({
     rating: z.number().min(1, "La clasificación es requerida").max(5, "La clasificación no puede ser mayor a 5"),
@@ -46,7 +47,8 @@ export function AddReveiew({userId, bookId}:any) {
                 description: "Reseña publicada",
             })
             form.reset();
-            setOpen(false)
+            setOpen(false);
+            revalidateAll();
         } else {
             toast({
                 variant: "destructive",
