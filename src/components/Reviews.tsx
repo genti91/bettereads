@@ -16,8 +16,9 @@ import EditReview from "./EditReview"
 
 export default async function Reviews({reviews, bookId}:any) {
     const session = await getServerSession(authOptions)
-    const averageRating = Number((reviews.reduce((acc:any, review:any) => acc + review.rating, 0) / reviews.length).toFixed(1))
+    let averageRating = Number((reviews.reduce((acc:any, review:any) => acc + review.rating, 0) / reviews.length).toFixed(1))
     const myReview = reviews.find((review:any) => session.user.id == review.userId)
+    averageRating = Number.isNaN(averageRating) ? 0 : averageRating
     let reviewsFiltered = reviews
     if (myReview) {
         reviewsFiltered = reviews.filter((review:any) => review.id != myReview.id)
@@ -53,9 +54,11 @@ export default async function Reviews({reviews, bookId}:any) {
                     {(session && !myReview) && <AddReveiew userId={session.user?.id} bookId={bookId}/>}
                 </div>
                 <div className="flex flex-col gap-5">
-                    <div className="px-4 w-[350px]">
-                        <ReviewCard review={myReview} owned={true}/>
-                    </div>
+                    {(session && myReview) && 
+                        <div className="px-4 w-[350px]">
+                            <ReviewCard review={myReview} owned={true}/>
+                        </div>
+                    }
                     <Tabs defaultValue="Todos" className="w-[400px]">
                         <TabsList>
                             <TabsTrigger value="Todos">Todos</TabsTrigger>
@@ -64,7 +67,7 @@ export default async function Reviews({reviews, bookId}:any) {
                         <TabsContent value="Todos">
                             <ScrollArea className="h-72 w-[350px] rounded-md p-4">
                                 <div className="flex flex-col gap-4">
-                                    {false && <h1 className="text-xl font-[500]">Este libro no tiene reseñas</h1>}
+                                    {!reviewsFiltered.length && <h1 className="text-xl font-[500]">Este libro no tiene reseñas</h1>}
                                     {reviewsFiltered.map((review:any) => (
                                         <ReviewCard review={review}/>
                                     ))}
