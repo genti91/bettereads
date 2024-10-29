@@ -17,7 +17,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { useState } from "react";
-import { revalidateAll } from "@/lib/actions";
+import { revalidateBook } from "@/lib/actions";
 import DeleteReviewButton from "./DeleteReviewButton";
 
 const formSchema = z.object({
@@ -46,10 +46,10 @@ export default function EditReview({review}:any) {
         })
         if (response.ok) {
             toast({
-                description: "Reseña publicada",
+                description: "Reseña actualizada"
             })
             setOpen(false);
-            revalidateAll();
+            revalidateBook(review.bookId);
         } else {
             toast({
                 variant: "destructive",

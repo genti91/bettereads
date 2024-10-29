@@ -11,7 +11,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "./ui/button"
-import { revalidateAll } from "@/lib/actions";
+import { revalidateBook } from "@/lib/actions";
 
 export default function DeleteReviewButton({ reviewId, onClick }: any) {
   async function deleteBook() {
@@ -19,7 +19,7 @@ export default function DeleteReviewButton({ reviewId, onClick }: any) {
       method: "DELETE",
     });
     onClick();
-    revalidateAll();
+    revalidateBook(reviewId);
   }
   return (
     <AlertDialog>
