@@ -88,7 +88,7 @@ export function AddReveiew({userId, bookId}:any) {
                             <FormItem>
                                 <FormLabel>Reseña</FormLabel>
                                 <FormControl>
-                                    <Textarea placeholder="Ecribir reseña" {...field} />
+                                    <Textarea placeholder="Escribir reseña" className="resize-none h-40" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
