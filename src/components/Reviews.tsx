@@ -17,7 +17,7 @@ import EditReview from "./EditReview"
 export default async function Reviews({reviews, bookId}:any) {
     const session = await getServerSession(authOptions)
     let averageRating = Number((reviews.reduce((acc:any, review:any) => acc + review.rating, 0) / reviews.length).toFixed(1))
-    const myReview = reviews.find((review:any) => session.user.id == review.userId)
+    const myReview = reviews.find((review:any) => session?.user.id == review.userId)
     averageRating = Number.isNaN(averageRating) ? 0 : averageRating
     let reviewsFiltered = reviews
     if (myReview) {
