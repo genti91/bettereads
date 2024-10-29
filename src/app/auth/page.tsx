@@ -36,7 +36,7 @@ export default function SignIn({ params, searchParams }: { params: { id: string 
       })
     
       if (res?.ok) {
-        window.location.href = "/profile"
+        window.location.href = "/"
       } else {
         alert("Usuario o contraseña incorrectos")
         window.location.href = "/auth"

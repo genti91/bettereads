@@ -3,10 +3,12 @@ import SearchBar from "../SearchBar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import ProfileIconMenue from "../ProfileIconMenue";
 import { Button } from "@/components/ui/button"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import LogOutButton from "../LogOutButton";
 
-
-export default function NavBar () {
-  
+export default async function NavBar () {
+  const session = await getServerSession(authOptions)
   return (
     <nav className="flex p-3 border-b-2">
         <div className="container flex flex-row flex-wrap justify-between items-center px-4">
@@ -19,9 +21,12 @@ export default function NavBar () {
           <div className="flex items-center gap-6">
             <SearchBar />
             <ProfileIconMenue />
-            <Link href="/auth">
-                <Button>Iniciar Sesión</Button>
-            </Link>
+              {session ?
+                <LogOutButton />:
+                <Link href="/auth">
+                  <Button>Iniciar Sesión</Button>
+                </Link>
+              }
           </div>
         </div>
     </nav>
