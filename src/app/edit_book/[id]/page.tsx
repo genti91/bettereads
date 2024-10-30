@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,8 +16,6 @@ import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { revalidatePath } from "next/cache"
 import { revalidateAll } from "@/lib/actions"
 import { Check, ChevronsUpDown } from "lucide-react"
 import {
@@ -48,7 +45,6 @@ const formSchema = z.object({
 
 export default function EditBook({ params, searchParams }: { params: { id: string }, searchParams: { [key: string]: string | string[] | undefined } }) {
     const { toast } = useToast()
-    const router = useRouter();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -63,7 +59,7 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState("");
     const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-    const [genres, setGenres] = useState([]) as any;
+    const [genres, setGenres] = useState<string[]>([]);
     useEffect(() => {
         const fetchBook = async () => {
             const response = await fetch(`/api/books/${params.id}`);
@@ -95,7 +91,9 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
     }, [params.id, form, toast]);
     async function onSubmit(values: z.infer<typeof formSchema>) {
         const body = Object.fromEntries(
+            /* eslint-disable */
           Object.entries(values).filter(([_, value]) => value !== "")
+          /* eslint-enable */
         )
         const response = await fetch("/api/books/" + params.id, {
             method: "PUT",
@@ -118,7 +116,8 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
               })
         }
     }
-    function formatGenre(string: string) {
+    function formatGenre(string: string | undefined) {
+        if (!string) return "";
         return string[0] + string.slice(1).toLowerCase();
     }
   return (
@@ -235,7 +234,7 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
                                         <CommandList>
                                             <CommandEmpty>No genre found.</CommandEmpty>
                                             <CommandGroup>
-                                                {genres.map((genre: any) => (
+                                                {genres.map((genre: string) => (
                                                     <CommandItem
                                                         key={genre}
                                                         value={genre}
@@ -260,8 +259,8 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
                                 </PopoverContent>
                             </Popover>
                             <div className="flex flex-wrap gap-2">
-                                {selectedGenres.map((genre) => (
-                                    <button onClick={() => {
+                                {selectedGenres.map((genre, index) => (
+                                    <button key={index} onClick={() => {
                                         if (genre === value) {
                                             setValue("");
                                         }

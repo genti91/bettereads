@@ -7,6 +7,7 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination"
+import { Book } from "@prisma/client";
 import Link from "next/link";
 
 const MAX_PAGINATION = 5;
@@ -19,8 +20,8 @@ async function getBooks(search: string) {
     return response.json();
 }
 
-export default async function Books({ pageNumber, maxPerPage, search }: any) {
-    const books = await getBooks(search);
+export default async function Books({ pageNumber, maxPerPage, search }: { pageNumber: string | string[], maxPerPage: number, search: string | string[] }) {
+    const books = await getBooks(search as string);
     const currentPage = Number(pageNumber);
     const start = (currentPage - 1) * maxPerPage;
     const end = start + maxPerPage;
@@ -28,7 +29,7 @@ export default async function Books({ pageNumber, maxPerPage, search }: any) {
     const maxPages = Math.ceil(books.length / maxPerPage);
 
     function getPaginationRange() {
-        let range = [];
+        const range = [];
 
         const a = Math.max(1, Math.min(currentPage - 1, maxPages - MAX_PAGINATION));
         const b = Math.min(a + MAX_PAGINATION, maxPages);
@@ -48,12 +49,12 @@ export default async function Books({ pageNumber, maxPerPage, search }: any) {
         );
     }
 
-    let paginationRange = getPaginationRange();
+    const paginationRange = getPaginationRange();
 
     return (
         <div className="flex flex-col gap-10">
             <div>
-                {paginatedBooks.map((book: any, index:number) => (
+                {paginatedBooks.map((book: Book) => (
                     <Link href={`/book/${book.id}`} passHref key={book.id}>
                         <div key={book.id} className="flex flex-row justify-between p-4 border-b-2 ">
                             <div className="flex flex-row">

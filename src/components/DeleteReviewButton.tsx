@@ -13,7 +13,7 @@ import {
 import { Button } from "./ui/button"
 import { revalidateBook } from "@/lib/actions";
 
-export default function DeleteReviewButton({ reviewId, onClick }: any) {
+export default function DeleteReviewButton({ reviewId, onClick }: { reviewId: string, onClick: () => void }) {
   async function deleteBook() {
     await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/reviews/${reviewId}`, {
       method: "DELETE",

@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Progress } from "@/components/ui/progress"
-import { StarIcon, StarFilledIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons"
+import { StarIcon, StarFilledIcon } from "@radix-ui/react-icons"
 import {
     Card,
     CardContent,
@@ -11,17 +11,24 @@ import {
   } from "@/components/ui/card"
 import { AddReveiew } from "./AddReview"
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions"
 import EditReview from "./EditReview"
+import { Prisma } from "@prisma/client"
 
-export default async function Reviews({reviews, bookId}:any) {
+type Review = Prisma.ReviewGetPayload<{
+    include: {
+        user: true
+    }
+}>
+
+export default async function Reviews({reviews, bookId}: {reviews: Review[], bookId: string}) {
     const session = await getServerSession(authOptions)
-    let averageRating = Number((reviews.reduce((acc:any, review:any) => acc + review.rating, 0) / reviews.length).toFixed(1))
-    const myReview = reviews.find((review:any) => session?.user.id == review.userId)
+    let averageRating = Number((reviews.reduce((acc:number, review:Review) => acc + review.rating, 0) / reviews.length).toFixed(1))
+    const myReview = reviews.find((review:Review) => session?.user.id == review.userId)
     averageRating = Number.isNaN(averageRating) ? 0 : averageRating
     let reviewsFiltered = reviews
     if (myReview) {
-        reviewsFiltered = reviews.filter((review:any) => review.id != myReview.id)
+        reviewsFiltered = reviews.filter((review:Review) => review.id != myReview.id)
     }
     return (
         <div className="flex flex-col gap-4">
@@ -33,10 +40,10 @@ export default async function Reviews({reviews, bookId}:any) {
                         <div className="flex flex-col gap-0">
                             <div className="flex gap-2">
                                 {Array.from({length: Math.floor(averageRating)}).map((_, i) => (
-                                    <StarFilledIcon/>
+                                    <StarFilledIcon key={i}/>
                                 ))}
                                 {Array.from({length: 5 - Math.floor(averageRating)}).map((_, i) => (
-                                    <StarIcon/>
+                                    <StarIcon key={i}/>
                                 ))}
                             </div>
                             <p className="text-sm">{reviews.length} calificaciones</p>
@@ -44,8 +51,8 @@ export default async function Reviews({reviews, bookId}:any) {
                     </div>
                     <div className="flex flex-col gap-2">
                         {[5,4,3,2,1].map((index) => (
-                            <div className="flex gap-2 items-center">
-                                <Progress className="h-1" value={reviews.filter((review:any) => review.rating === index).length / reviews.length * 100}/>
+                            <div key={index} className="flex gap-2 items-center">
+                                <Progress className="h-1" value={reviews.filter((review:Review) => review.rating === index).length / reviews.length * 100}/>
                                 <p className="text-xs text-gray-500">{index}</p>
                                 <StarFilledIcon color="gray"/>
                             </div>
@@ -68,8 +75,8 @@ export default async function Reviews({reviews, bookId}:any) {
                             <ScrollArea className="h-72 w-[350px] rounded-md p-4">
                                 <div className="flex flex-col gap-4">
                                     {!reviewsFiltered.length && <h1 className="text-xl font-[500]">Este libro no tiene reseñas</h1>}
-                                    {reviewsFiltered.map((review:any) => (
-                                        <ReviewCard review={review}/>
+                                    {reviewsFiltered.map((review:Review, i:number) => (
+                                        <ReviewCard key={i} review={review}/>
                                     ))}
                                 </div>
                             </ScrollArea>
@@ -86,7 +93,7 @@ export default async function Reviews({reviews, bookId}:any) {
     )
 }
 
-function ReviewCard({review, owned}:any) {
+function ReviewCard({review, owned}: {review: Review, owned?: boolean}) {
     return (
         <Card key={review.id}>
             <CardHeader className="pb-3 gap-1">
@@ -99,7 +106,10 @@ function ReviewCard({review, owned}:any) {
                 </div>
                 <CardDescription className="flex gap-1">
                     {Array.from({length: review.rating}).map((_, i) => (
-                        <StarFilledIcon/>
+                        <StarFilledIcon key={i}/>
+                    ))}
+                    {Array.from({length: 5 - review.rating}).map((_, i) => (
+                        <StarIcon key={i}/>
                     ))}
                 </CardDescription>
             </CardHeader>
