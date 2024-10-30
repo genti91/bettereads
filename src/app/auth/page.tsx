@@ -77,6 +77,7 @@ export default function SignIn() {
                 description: "Usuario registrado"
             })
             form.reset();
+            await onSubmit(values);
             await revalidateAll();
         } else {
             toast({
