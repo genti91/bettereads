@@ -1,17 +1,25 @@
 import { prisma } from "@/lib/prisma";
 
+interface Filters {
+    title?: {
+        contains: string;
+    };
+    userId?: string;
+}
+
 export async function GET(req: Request) {
     const url = new URL(req.url);
     const title = url.searchParams.get("title");
-    let books;
+    const by_user = url.searchParams.get("by_user");
+    const filters: Filters = {};
     if (title) {
-        books = await prisma.book.findMany({
-            where: { title: { contains: title, mode: 'insensitive' } }
-        });
-    } 
-    else {
-        books = await prisma.book.findMany();
+        filters.title = { contains: title };
     }
+    if (by_user) {
+        filters.userId = by_user;
+    }
+
+    const books = await prisma.book.findMany({ where: filters });
     return Response.json(books);
 }
 
