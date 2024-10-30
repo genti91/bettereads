@@ -4,25 +4,20 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
-import { useEffect, useState } from 'react';
 import { revalidateAll } from "@/lib/actions"
+import { cn } from "@/lib/utils"
 import { Check, ChevronsUpDown } from "lucide-react"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
 import {
     Command,
     CommandEmpty,
@@ -31,19 +26,26 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command"
-import { cn } from "@/lib/utils"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
 import { FaCircleXmark } from "react-icons/fa6";
 
 const formSchema = z.object({
-    title: z.string(),
-    author: z.string(),
-    description: z.string(),
-    imageUrl: z.string(),
+    title: z.string().min(1, "Title is required"),
+    author: z.string().min(1, "Author is required"),
+    description: z.string().min(1, "Description is required"),
+    imageUrl: z.string().min(1, "Image URL is required"),
     editorial: z.string().min(1, "Editorial name is required"),
     pageAmount: z.number().min(1, "Page amount is required"),
-  })
+})
 
-export default function EditBook({ params, searchParams }: { params: { id: string }, searchParams: { [key: string]: string | string[] | undefined } }) {
+export default function AddBook() {
+    const { data: session } = useSession()
     const { toast } = useToast()
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -56,25 +58,31 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
             pageAmount: 0,
         },
     })
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState("");
-    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        const response = await fetch("/api/books", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ ...values, genres: selectedGenres, userId: session?.user?.id }),
+        })
+        if (response.ok) {
+            toast({
+                description: "Book added successfully"
+            })
+            form.reset();
+            revalidateAll("/my_books");
+        } else {
+            toast({
+                variant: "destructive",
+                description: "An error occurred"
+            })
+        }
+    }
+
     const [genres, setGenres] = useState<string[]>([]);
+
     useEffect(() => {
-        const fetchBook = async () => {
-            const response = await fetch(`/api/books/${params.id}`);
-            if (response.ok) {
-                const bookData = await response.json();
-                form.reset(bookData);
-                setSelectedGenres(bookData.genres);
-            } else {
-                toast({
-                    variant: "destructive",
-                    description: "Error loading book data",
-                });
-            }
-        };
-        fetchBook();
         const fetchGenres = async () => {
             const response = await fetch(`/api/genres`);
             if (response.ok) {
@@ -88,100 +96,85 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
             }
         };
         fetchGenres();
-    }, [params.id, form, toast]);
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-        const body = Object.fromEntries(
-            /* eslint-disable */
-          Object.entries(values).filter(([_, value]) => value !== "")
-          /* eslint-enable */
-        )
-        const response = await fetch("/api/books/" + params.id, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({...body, genres: selectedGenres}),
-        })
-        if (response.ok) {
-            toast({
-                description: "Book updated successfully"
-              })
-            form.reset()
-            revalidateAll(`/my_books/?page=` + (searchParams["page"] ?? '1'));
-            
-        } else {
-            toast({
-                variant: "destructive",
-                description: "An error occurred"
-              })
-        }
-    }
+    }, [toast]);
+
     function formatGenre(string: string | undefined) {
         if (!string) return "";
         return string[0] + string.slice(1).toLowerCase();
     }
-  return (
-    <div className="sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
-        <Link href={`/my_books/?page=` + (searchParams["page"] ?? '1')}>
-            <Button>Go Back</Button>
-        </Link>
-        <div className="flex flex-col items-center">
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 w-1/3 flex flex-col gap-8">
-                    <div className="space-y-3">
-                        <FormField
-                        control={form.control}
-                        name="title"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Title</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Title" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                        <FormField
-                        control={form.control}
-                        name="author"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Author</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Author" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                        <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                                <Textarea placeholder="Description" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                        <FormField
-                        control={form.control}
-                        name="imageUrl"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Image URL</FormLabel>
-                            <FormControl>
-                                <Input placeholder="URL" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                        <FormField
+
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState("");
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+    if (!session) {
+        return (
+            <div className="flex justify-center items-center h-96">
+                <h1 className="text-3xl">Necesitas iniciar sesión para agregar un libro</h1>
+            </div>
+        );
+    }
+    return (
+        <div className="sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
+            <Link href="/profile">
+                <Button>Go Back</Button>
+            </Link>
+            <div className="flex flex-col items-center">
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 w-1/3 flex flex-col gap-8">
+                        <div className="space-y-3">
+                            <FormField
+                                control={form.control}
+                                name="title"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Title</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Title" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="author"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Author</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Author" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Description</FormLabel>
+                                        <FormControl>
+                                            <Textarea placeholder="Description" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="imageUrl"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Image URL</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="URL" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
                                 control={form.control}
                                 name="editorial"
                                 render={({ field }) => (
@@ -277,11 +270,11 @@ export default function EditBook({ params, searchParams }: { params: { id: strin
                                     </button>
                                 ))}
                             </div>
-                    </div>
-                    <Button type="submit" >Submit</Button>
-                </form>
-            </Form>
-        </div>
-    </div>
-  );
+                        </div>
+                        <Button type="submit" >Submit</Button>
+                    </form>
+                </Form>
+            </div>
+        </div >
+    );
 }

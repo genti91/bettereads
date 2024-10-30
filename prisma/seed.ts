@@ -4,6 +4,14 @@ import { books } from './books'
 const prisma = new PrismaClient()
 
 async function main() {
+  const user = await prisma.user.create({
+    data: {
+      username: "giovinco",
+      password: "asdf1234"
+    },
+  });
+
+
   for (let book of books) {
     await prisma.book.upsert({
         where: { id: book.id },
@@ -15,9 +23,10 @@ async function main() {
               where: { name: genreName },
               create: { name: genreName }
             }))
-          }
+          },
+          userId: user.id
         }
-    })
+    });
   }
 }
 

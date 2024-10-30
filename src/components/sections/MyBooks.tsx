@@ -10,19 +10,30 @@ import {
 import Link from "next/link";
 import { Button } from "../ui/button";
 import DeleteBookButton from "../DeleteBookButton";
+import { Book } from "@prisma/client";
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions"
 
 const MAX_PAGINATION = 5;
 
-async function getBooks(search: string) {
+async function getBooks(search: string, authorId: string) {
   const response = await fetch(
-      `${process.env.APP_URL}/api/books${search ? `?title=${search}` : ""}`,
+      `${process.env.APP_URL}/api/books${search ? `?title=${search}&by_user=${authorId}` : `?by_user=${authorId}`}`,
       { cache: "no-store" }
   );
   return response.json();
 }
 
-export default async function MyBooks({ pageNumber, maxPerPage, search }: any) {
-  const books = await getBooks(search);
+export default async function MyBooks({ pageNumber, maxPerPage, search }: { pageNumber: string | string[], maxPerPage: number, search: string | string[] }) {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    return (
+      <div className="flex justify-center items-center h-96">
+        <h1 className="text-3xl">Necesitas iniciar sesión para ver tus libros</h1>
+      </div>
+    );
+  }
+  const books = await getBooks(search as string, session?.user.id ?? "");
   const currentPage = Number(pageNumber);
   const start = (currentPage - 1) * maxPerPage;
   const end = start + maxPerPage;
@@ -30,7 +41,7 @@ export default async function MyBooks({ pageNumber, maxPerPage, search }: any) {
   const maxPages = Math.ceil(books.length / maxPerPage);
 
   function getPaginationRange() {
-      let range = [];
+      const range = [];
 
       const a = Math.max(1, Math.min(currentPage - 1, maxPages - MAX_PAGINATION));
       const b = Math.min(a + MAX_PAGINATION, maxPages);
@@ -50,12 +61,12 @@ export default async function MyBooks({ pageNumber, maxPerPage, search }: any) {
       );
   }
 
-  let paginationRange = getPaginationRange();
+  const paginationRange = getPaginationRange();
 
   return (
       <div className="flex flex-col gap-10">
           <div>
-              {paginatedBooks.map((book: any, index:number) => (
+              {paginatedBooks.map((book: Book) => (
                 <div key={book.id} className="flex flex-row justify-between p-4 border-b-2 ">
                     <div className="flex w-full justify-between gap-4">
                       <Link href={`/book/${book.id}`} passHref key={book.id}>
