@@ -1,5 +1,4 @@
 import Reviews from "@/components/Reviews";
-import Books from "@/components/sections/Books";
 
 async function getBook(id: string) {
   const response = await fetch(

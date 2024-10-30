@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -78,7 +77,7 @@ export default function Page() {
         }
     }
 
-    const [genres, setGenres] = useState([]) as any;
+    const [genres, setGenres] = useState<string[]>([]);
 
     useEffect(() => {
         const fetchGenres = async () => {
@@ -94,9 +93,10 @@ export default function Page() {
             }
         };
         fetchGenres();
-    }, []);
+    }, [toast]);
 
-    function formatGenre(string: string) {
+    function formatGenre(string: string | undefined) {
+        if (!string) return "";
         return string[0] + string.slice(1).toLowerCase();
     }
 
@@ -218,7 +218,7 @@ export default function Page() {
                                         <CommandList>
                                             <CommandEmpty>No genre found.</CommandEmpty>
                                             <CommandGroup>
-                                                {genres.map((genre: any) => (
+                                                {genres.map((genre: string) => (
                                                     <CommandItem
                                                         key={genre}
                                                         value={genre}
@@ -243,8 +243,8 @@ export default function Page() {
                                 </PopoverContent>
                             </Popover>
                             <div className="flex flex-wrap gap-2">
-                                {selectedGenres.map((genre) => (
-                                    <button onClick={() => {
+                                {selectedGenres.map((genre, index) => (
+                                    <button key={index} onClick={() => {
                                         if (genre === value) {
                                             setValue("");
                                         }

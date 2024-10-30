@@ -1,10 +1,9 @@
 import Link from "next/link";
 import SearchBar from "../SearchBar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import ProfileIconMenue from "../ProfileIconMenue";
 import { Button } from "@/components/ui/button"
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions"
 import LogOutButton from "../LogOutButton";
 
 export default async function NavBar () {

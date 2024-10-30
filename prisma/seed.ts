@@ -1,12 +1,10 @@
 import { PrismaClient } from '@prisma/client'
 import { books } from './books'
 
-
-const USER_ID_DEFAULT = 1;
 const prisma = new PrismaClient()
 
 async function main() {
-  const _user = await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       username: "giovinco",
       password: "asdf1234"
@@ -26,7 +24,7 @@ async function main() {
               create: { name: genreName }
             }))
           },
-          userId: USER_ID_DEFAULT,
+          userId: user.id
         }
     });
   }

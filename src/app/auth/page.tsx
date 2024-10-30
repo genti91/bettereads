@@ -19,7 +19,7 @@ const formSchema = z.object({
     password: z.string().min(1, "password is required")
   })
 
-export default function SignIn({ params, searchParams }: { params: { id: string }, searchParams: { [key: string]: string | string[] | undefined } }) {
+export default function SignIn() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {

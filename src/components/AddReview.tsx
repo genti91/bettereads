@@ -23,7 +23,7 @@ const formSchema = z.object({
     description: z.string(),
 })
 
-export function AddReveiew({userId, bookId}:any) {
+export function AddReveiew({userId, bookId}: {userId: string, bookId: string}) {
     const [open, setOpen] = useState(false)
     const { toast } = useToast()
     const form = useForm<z.infer<typeof formSchema>>({

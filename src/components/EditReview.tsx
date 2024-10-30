@@ -19,13 +19,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useState } from "react";
 import { revalidateBook } from "@/lib/actions";
 import DeleteReviewButton from "./DeleteReviewButton";
+import { Review } from "@prisma/client";
 
 const formSchema = z.object({
     rating: z.number().min(1, "La clasificación es requerida").max(5, "La clasificación no puede ser mayor a 5"),
     description: z.string(),
 })
 
-export default function EditReview({review}:any) {
+export default function EditReview({review}: {review: Review}) {
     const [open, setOpen] = useState(false)
     const { toast } = useToast()
     const form = useForm<z.infer<typeof formSchema>>({

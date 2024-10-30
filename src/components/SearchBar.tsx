@@ -1,5 +1,4 @@
 "use client";
-
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { Input } from "./ui/input";
 
@@ -8,8 +7,8 @@ export default function SearchBar () {
     const pathname = usePathname();
     const { replace } = useRouter();
 
-    function handleChange(e: any) {
-        let value = e.target.value;
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const value = e.target.value;
         const params = new URLSearchParams(searchParams);
         if (value) {
             params.set("search_book", value);

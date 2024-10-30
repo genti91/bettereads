@@ -10,7 +10,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 }
 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-    let review = await prisma.review.delete({
+    const review = await prisma.review.delete({
         where: { id: params.id }
     });
     return Response.json(review);
