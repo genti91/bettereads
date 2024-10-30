@@ -21,7 +21,7 @@ const formSchema = z.object({
     password: z.string().min(1, "password is required")
   })
 
-export default function SignIn({ params, searchParams }: { params: { id: string }, searchParams: { [key: string]: string | string[] | undefined } }) {
+export default function SignIn() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -42,15 +42,19 @@ export default function SignIn({ params, searchParams }: { params: { id: string 
       if (res?.ok) {
         window.location.href = "/"
       } else {
-        alert("Usuario o contraseña incorrectos")
-        window.location.href = "/auth"
+          toast({
+              variant: "destructive",
+              description: "Usuario o contraseña incorrectos"
+          })
+          form.reset();
+          return;
       }
     }
 
     async function onSubmitRegister(values: z.infer<typeof formSchema>) {
         const res = await fetch("/api/users");
         const users = res.ok ? await res.json() : [];
-        const userExists = users.some(user => user.username === values.username);
+        const userExists = users.some((user: { username: string }) => user.username === values.username);
 
         if (userExists) {
             toast({
@@ -73,7 +77,7 @@ export default function SignIn({ params, searchParams }: { params: { id: string 
                 description: "Usuario registrado"
             })
             form.reset();
-            revalidateAll();
+            await revalidateAll();
         } else {
             toast({
                 variant: "destructive",
