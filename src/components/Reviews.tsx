@@ -33,10 +33,10 @@ export default async function Reviews({reviews, bookId}:any) {
                         <div className="flex flex-col gap-0">
                             <div className="flex gap-2">
                                 {Array.from({length: Math.floor(averageRating)}).map((_, i) => (
-                                    <StarFilledIcon/>
+                                    <StarFilledIcon key={i}/>
                                 ))}
                                 {Array.from({length: 5 - Math.floor(averageRating)}).map((_, i) => (
-                                    <StarIcon/>
+                                    <StarIcon key={i}/>
                                 ))}
                             </div>
                             <p className="text-sm">{reviews.length} calificaciones</p>
@@ -99,7 +99,10 @@ function ReviewCard({review, owned}:any) {
                 </div>
                 <CardDescription className="flex gap-1">
                     {Array.from({length: review.rating}).map((_, i) => (
-                        <StarFilledIcon/>
+                        <StarFilledIcon key={i}/>
+                    ))}
+                    {Array.from({length: 5 - review.rating}).map((_, i) => (
+                        <StarIcon key={i}/>
                     ))}
                 </CardDescription>
             </CardHeader>
