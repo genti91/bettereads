@@ -6,15 +6,7 @@ const USER_ID_DEFAULT = 1;
 const prisma = new PrismaClient()
 
 async function main() {
-  const _user = await prisma.user.create({
-    data: {
-      username: "giovinco",
-      password: "asdf1234"
-    },
-  });
-
-
-  for (let book of books) {
+  for (const book of books) {
     await prisma.book.upsert({
         where: { id: book.id },
         update: {},
