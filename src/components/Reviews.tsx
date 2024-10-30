@@ -108,6 +108,9 @@ function ReviewCard({review, owned}: {review: Review, owned?: boolean}) {
                     {Array.from({length: review.rating}).map((_, i) => (
                         <StarFilledIcon key={i}/>
                     ))}
+                    {Array.from({length: 5 - review.rating}).map((_, i) => (
+                        <StarIcon key={i}/>
+                    ))}
                 </CardDescription>
             </CardHeader>
             <CardContent>
