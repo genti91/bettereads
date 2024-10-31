@@ -19,9 +19,8 @@ export default async function NavBar () {
           </Link>
           <div className="flex items-center gap-6">
             <SearchBar />
-            <ProfileIconMenue />
               {session ?
-                <LogOutButton />:
+                <ProfileIconMenue />:
                 <Link href="/auth">
                   <Button>Iniciar Sesión</Button>
                 </Link>
