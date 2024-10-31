@@ -4,7 +4,6 @@ import ProfileIconMenue from "../ProfileIconMenue";
 import { Button } from "@/components/ui/button"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions"
-import LogOutButton from "../LogOutButton";
 
 export default async function NavBar () {
   const session = await getServerSession(authOptions)
@@ -20,8 +19,8 @@ export default async function NavBar () {
           <div className="flex items-center gap-6">
             <SearchBar />
               {session ?
-                <ProfileIconMenue />:
-                <Link href="/auth">
+                <ProfileIconMenue profileImage={session?.user.image ?? ""} />:
+                <Link href="/auth/login">
                   <Button>Iniciar Sesión</Button>
                 </Link>
               }

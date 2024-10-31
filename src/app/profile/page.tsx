@@ -11,7 +11,7 @@ export default async function Page() {
     return (
       <div className="grid items-center justify-items-center sm:px-20 py-10 font-[family-name:var(--font-geist-sans)]">
         <p>No tienes acceso a esta página. Por favor, inicia sesión.</p>
-        <Link href="/auth">
+        <Link href="/auth/login">
           <Button>Ir a la página de inicio de sesión</Button>
         </Link>
       </div>

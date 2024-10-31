@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { signIn } from "next-auth/react"
-import {revalidateAll} from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast"
+import Link from "next/link"
 
 const formSchema = z.object({
     username: z.string().min(1, "username is required"),
@@ -51,47 +51,11 @@ export default function SignIn() {
       }
     }
 
-    async function onSubmitRegister(values: z.infer<typeof formSchema>) {
-        const res = await fetch("/api/users");
-        const users = res.ok ? await res.json() : [];
-        const userExists = users.some((user: { username: string }) => user.username === values.username);
-
-        if (userExists) {
-            toast({
-                variant: "destructive",
-                description: "El usuario ya existe"
-            })
-            form.reset();
-            return;
-        }
-
-        const response = await fetch("/api/users", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({...values}),
-        })
-        if (response.ok) {
-            toast({
-                description: "Usuario registrado"
-            })
-            form.reset();
-            await onSubmit(values);
-            await revalidateAll();
-        } else {
-            toast({
-                variant: "destructive",
-                description: "Ocurrió un error"
-            })
-        }
-    }
-
   return (
-    <div className="sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
+    <div className="sm:px-20 py-10 font-[family-name:var(--font-geist-sans)]">
         <div className="flex flex-col items-center">
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7 w-1/3 flex flex-col">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7 md:w-1/4 flex flex-col">
                     <div className="space-y-3">
 
                         <FormField
@@ -123,12 +87,14 @@ export default function SignIn() {
                         />
 
                     </div>
-                    <Button type="submit">Iniciar sesión</Button>
+                    <div className="flex flex-col">
+                        <Button type="submit">Iniciar sesión</Button>
+                        <Link href="/auth/register" className="mt-3.5">
+                            <Button type="submit" variant="secondary" className="w-full">Registrarse</Button>
+                        </Link>
+                    </div>
                 </form>
 
-                <form onSubmit={form.handleSubmit(onSubmitRegister)} className="mt-3.5 w-1/3">
-                    <Button type="submit" variant="secondary" className="w-full">Registrarse</Button>
-                </form>
             </Form>
         </div>
     </div>

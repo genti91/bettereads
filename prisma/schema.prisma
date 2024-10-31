@@ -46,6 +46,10 @@ model User {
   password String
   books    Book[]   @relation("BookUser")
   Review   Review[]
+  name     String
+  picture  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Genre {

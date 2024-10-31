@@ -22,7 +22,7 @@ export const authOptions: AuthOptions =
           })
       
           if(user){
-            return { id: user.id, name: user.username }
+            return { id: user.id, name: user.name, image: user.picture }
           }
           return null
 
