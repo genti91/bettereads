@@ -13,14 +13,29 @@ import Link from "next/link";
 const MAX_PAGINATION = 5;
 
 async function getBooks(search: string) {
-    const response = await fetch(
-        `${process.env.APP_URL}/api/books${search ? `?title=${search}` : ""}`,
-        { cache: "no-store" }
-    );
+    const genresForFilter: string[] = ["ADVENTURE", "FANTASY"]
+
+    const url = new URL(`${process.env.NEXT_PUBLIC_APP_URL}/api/books${search ? `?title=${search}` : ""}`);
+
+    genresForFilter.forEach(genre => {
+        url.searchParams.append("by_genres", genre);
+    });
+
+    const response = await fetch(url.toString(), { cache: "no-store" });
+
     return response.json();
 }
 
-export default async function Books({ pageNumber, maxPerPage, search }: { pageNumber: string | string[], maxPerPage: number, search: string | string[] }) {
+export default async function Books({ 
+    pageNumber, 
+    maxPerPage, 
+    search,
+  }: { 
+    pageNumber: string | string[]; 
+    maxPerPage: number; 
+    search: string | string[];
+  }) 
+  {
     const books = await getBooks(search as string);
     const currentPage = Number(pageNumber);
     const start = (currentPage - 1) * maxPerPage;

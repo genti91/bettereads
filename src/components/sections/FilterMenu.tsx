@@ -1,5 +1,4 @@
 "use client"
-
 import {
     Popover,
     PopoverContent,
@@ -24,23 +23,14 @@ import {
 
 const MAX_PAGINATION = 5;
 
-async function filterByGenres(selectedGenres: string[]) {
-    const url = new URL(`${process.env.NEXT_PUBLIC_APP_URL}/api/books`);
-
-    selectedGenres.forEach(genre => {
-        url.searchParams.append("by_genres", genre);
-    });
-
-    const response = await fetch(url.toString(), { cache: "no-store" });
-    
-    if (!response.ok) {
-        throw new Error("Failed to fetch books");
-    }
-
-    return response.json();
-}
-
-export default function FilterMenu({ pageNumber, maxPerPage }: { pageNumber: string | string[], maxPerPage: number }) {
+export default function FilterMenu({ 
+    pageNumber,
+    maxPerPage,
+    }: { 
+    pageNumber: string | string[];
+    maxPerPage: number;
+    }) 
+{
     const [genres, setGenres] = useState<string[]>([]);
     const { toast } = useToast()
 
@@ -69,8 +59,6 @@ export default function FilterMenu({ pageNumber, maxPerPage }: { pageNumber: str
     const [value, setValue] = useState("");
     const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
-
-
     return (
         <div className="flex gap-10">
             <Popover open={open} onOpenChange={setOpen}>
@@ -94,7 +82,6 @@ export default function FilterMenu({ pageNumber, maxPerPage }: { pageNumber: str
                                         value={genre}
                                         onSelect={(currentValue) => {
                                             setValue(currentValue === value ? "" : currentValue)
-                                            setOpen(false)
                                             setSelectedGenres([...selectedGenres, currentValue])
                                         }}
                                     >
@@ -120,9 +107,7 @@ export default function FilterMenu({ pageNumber, maxPerPage }: { pageNumber: str
                                 }
                                 setSelectedGenres(selectedGenres.filter((selectedGenre) => selectedGenre !== genre));
                             }}>
-                                <span
-                                    key={genre}
-                                >
+                                <span key={genre}>
                                     <div className="flex items-center px-2 py-1 bg-gray-100 rounded-full gap-2">
                                         {formatGenre(genre)}
                                         <FaCircleXmark />
@@ -131,11 +116,6 @@ export default function FilterMenu({ pageNumber, maxPerPage }: { pageNumber: str
                             </button>
                         ))}
                     </div>
-
-                    <Button 
-                    onClick={
-                        () => filterByGenres(selectedGenres)
-                    }>Filter Apply</Button>
                 </PopoverContent>
             </Popover>
         </div>
