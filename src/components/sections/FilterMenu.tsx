@@ -25,7 +25,7 @@ import {
 const MAX_PAGINATION = 5;
 
 async function filterByGenres(selectedGenres: string[]) {
-    const url = new URL(`${process.env.APP_URL}/api/books`);
+    const url = new URL(`${process.env.NEXT_PUBLIC_APP_URL}/api/books`);
 
     selectedGenres.forEach(genre => {
         url.searchParams.append("by_genres", genre);
@@ -41,35 +41,6 @@ async function filterByGenres(selectedGenres: string[]) {
 }
 
 export default function FilterMenu({ pageNumber, maxPerPage }: { pageNumber: string | string[], maxPerPage: number }) {
-    // const books = await filterByGenres(search as string);
-    // const currentPage = Number(pageNumber);
-    // const start = (currentPage - 1) * maxPerPage;
-    // const end = start + maxPerPage;
-    // const paginatedBooks = books.slice(start, end);
-    // const maxPages = Math.ceil(books.length / maxPerPage);
-
-    // function getPaginationRange() {
-    //     const range = [];
-
-    //     const a = Math.max(1, Math.min(currentPage - 1, maxPages - MAX_PAGINATION));
-    //     const b = Math.min(a + MAX_PAGINATION, maxPages);
-
-    //     for (let i = a; i <= b; i++) {
-    //         range.push(i);
-    //     }
-
-    //     return range;
-    // }
-
-    // if (books.length === 0) {
-    //     return (
-    //         <div className="flex justify-center items-center h-96">
-    //             <h1 className="text-3xl">No books found</h1>
-    //         </div>
-    //     );
-    // }
-
-    // const paginationRange = getPaginationRange();
     const [genres, setGenres] = useState<string[]>([]);
     const { toast } = useToast()
 
