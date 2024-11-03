@@ -25,10 +25,18 @@ import {
 const MAX_PAGINATION = 5;
 
 async function filterByGenres(selectedGenres: string[]) {
-    const response = await fetch(
-        `${process.env.APP_URL}/api/books${search ? `?title=${search}` : ""}`,
-        { cache: "no-store" }
-    );
+    const url = new URL(`${process.env.APP_URL}/api/books`);
+
+    selectedGenres.forEach(genre => {
+        url.searchParams.append("by_genres", genre);
+    });
+
+    const response = await fetch(url.toString(), { cache: "no-store" });
+    
+    if (!response.ok) {
+        throw new Error("Failed to fetch books");
+    }
+
     return response.json();
 }
 
@@ -98,10 +106,6 @@ export default function FilterMenu({ pageNumber, maxPerPage }: { pageNumber: str
                 <PopoverTrigger asChild>
                     <Button>
                         <FaFilter/> Filter
-                        {/* {value
-                            ? formatGenre(genres.find((genre: string) => genre === value))
-                            : "Select genre..."}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" /> */}
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[300px] p-0">
