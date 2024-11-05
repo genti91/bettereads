@@ -12,3 +12,7 @@ export async function revalidateAll(redirectTo?: string | undefined) {
 export async function revalidateBook(bookId: string) {
     revalidatePath(`/books/${bookId}`);
 }
+
+export async function revalidateShelves() {
+    revalidatePath(`/bookshelves`);
+}

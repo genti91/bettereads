@@ -9,7 +9,14 @@ async function main() {
       username: "giovinco",
       password: "asdf1234",
       name: "Sebastian",
-      picture: "https://github.com/shadcn.png"
+      picture: "https://github.com/shadcn.png",
+      shelves: {
+        create: [
+          { name: "Read" },
+          { name: "To Read" },
+          { name: "Reading" },
+        ],
+      },
     },
   });
 

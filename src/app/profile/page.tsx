@@ -8,6 +8,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
+import Shelves from "@/components/sections/Shelves";
 
 
 export default async function Page() {
@@ -30,7 +31,7 @@ export default async function Page() {
       <div className="flex gap-10 flex-wrap">
         <Avatar className="h-52 w-52">
           <AvatarImage src={session.user.image ?? ""}/>
-          <AvatarFallback>{session.user.name?.charAt(0)}</AvatarFallback>
+          <AvatarFallback className="text-7xl">{session.user.name?.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col gap-4 w-2/3">
           <h1 className="text-3xl font-bold">{session.user.name}</h1>
@@ -46,18 +47,7 @@ export default async function Page() {
           <Separator />
             <h2 className="text-xl font-bold underline">Bookshelves:</h2>
             <div className="flex gap-6 flex-row flex-wrap">
-              <Link href="/bookshelves?shelf=read" className="text-nowrap">
-                Read (2)
-              </Link>
-              <Link href="/bookshelves?shelf=to_read" className="text-nowrap">
-                To Read (1)
-              </Link>
-              <Link href="/bookshelves?shelf=reading" className="text-nowrap">
-                Reading (0)
-              </Link>
-              <Link href="/bookshelves?shelf=custom" className="text-nowrap">
-                Custom (3)
-              </Link>
+              <Shelves userId={session.user.id} />
             </div>
         </div>
       </div>
