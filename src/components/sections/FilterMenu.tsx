@@ -20,17 +20,17 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 const MAX_PAGINATION = 5;
 
-export default function FilterMenu({ 
+export default function FilterMenu({
     pageNumber,
     maxPerPage,
-    }: { 
+}: {
     pageNumber: string | string[];
     maxPerPage: number;
-    }) 
-{
+}) {
     const [genres, setGenres] = useState<string[]>([]);
     const { toast } = useToast()
 
@@ -58,19 +58,34 @@ export default function FilterMenu({
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState("");
     const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const { replace } = useRouter();
+    function handleGenresChange() {
+        const params = new URLSearchParams(searchParams);
+        if (selectedGenres.length > 0) {
+            params.set("genres_filter", selectedGenres.join(","));
+        } else {
+            params.delete("genres_filter");
+        }
+        replace(`${pathname}?${params.toString()}`);
+    }
+    useEffect(() => {
+        handleGenresChange();
+    }, [selectedGenres]);
 
     return (
         <div className="flex gap-10">
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button>
-                        <FaFilter/> Filter
+                        <FaFilter /> Filter
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[300px] p-0">
 
                     <h2>Filter by genre</h2>
-                    
+
                     <Command>
                         <CommandInput placeholder="Search genre..." />
                         <CommandList>
