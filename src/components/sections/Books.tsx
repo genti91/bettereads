@@ -24,6 +24,7 @@ async function getBooks(search: string, genres: string) {
         });
     }
 
+    console.log(url.toString())
     const response = await fetch(url.toString(), { cache: "no-store" });
 
     return response.json();

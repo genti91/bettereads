@@ -39,6 +39,7 @@ export default function FilterMenu({
             const response = await fetch(`/api/genres`);
             if (response.ok) {
                 const genresData = await response.json();
+                genresData.sort();
                 setGenres(genresData);
             } else {
                 toast({
@@ -55,8 +56,6 @@ export default function FilterMenu({
         return string[0] + string.slice(1).toLowerCase();
     }
 
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState("");
     const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -75,64 +74,36 @@ export default function FilterMenu({
     }, [selectedGenres]);
 
     return (
-        <div className="flex gap-10">
-            <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                    <Button>
-                        <FaFilter /> Filter
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[300px] p-0">
-
-                    <h2>Filter by genre</h2>
-
-                    <Command>
-                        <CommandInput placeholder="Search genre..." />
-                        <CommandList>
-                            <CommandEmpty>No genre found.</CommandEmpty>
-                            <CommandGroup>
-                                {genres.map((genre: string) => (
-                                    <CommandItem
-                                        key={genre}
-                                        value={genre}
-                                        onSelect={(currentValue) => {
-                                            setValue(currentValue === value ? "" : currentValue)
-                                            setSelectedGenres([...selectedGenres, currentValue])
-                                        }}
-                                    >
-                                        <Check
-                                            className={cn(
-                                                "mr-2 h-4 w-4",
-                                                value === genre ? "opacity-100" : "opacity-0"
-                                            )}
-                                        />
-                                        {formatGenre(genre)}
-                                    </CommandItem>
-                                ))}
-                            </CommandGroup>
-                        </CommandList>
-                    </Command>
-
-
-                    <div className="flex flex-wrap gap-2">
-                        {selectedGenres.map((genre, index) => (
-                            <button key={index} onClick={() => {
-                                if (genre === value) {
-                                    setValue("");
+        <div className="flex">
+            <Command>
+                <CommandInput placeholder="Filter by genre..." />
+                <CommandList>
+                    <CommandEmpty>No genre found.</CommandEmpty>
+                    <CommandGroup>
+                        {genres.map((genre: string) => (
+                            <CommandItem
+                                key={genre}
+                                value={genre}
+                                onSelect={(currentValue) => {
+                                    if (!selectedGenres.includes(currentValue)) {
+                                        setSelectedGenres([...selectedGenres, currentValue])
+                                    } else {
+                                        setSelectedGenres(selectedGenres.filter((selectedGenre) => selectedGenre !== currentValue));
+                                    }
                                 }
-                                setSelectedGenres(selectedGenres.filter((selectedGenre) => selectedGenre !== genre));
-                            }}>
-                                <span key={genre}>
-                                    <div className="flex items-center px-2 py-1 bg-gray-100 rounded-full gap-2">
-                                        {formatGenre(genre)}
-                                        <FaCircleXmark />
-                                    </div>
-                                </span>
-                            </button>
+                                }>
+                                <Check
+                                    className={cn(
+                                        "mr-2 h-4 w-4",
+                                        selectedGenres.includes(genre) ? "opacity-100" : "opacity-0"
+                                    )}
+                                />
+                                {formatGenre(genre)}
+                            </CommandItem>
                         ))}
-                    </div>
-                </PopoverContent>
-            </Popover>
+                    </CommandGroup>
+                </CommandList>
+            </Command>
         </div>
     )
 }

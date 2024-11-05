@@ -4,21 +4,6 @@ interface Filters {
     title?: {
         contains: string;
     };
-    genres?:
-        | {
-            some: {
-                name: {
-                    in: string[];
-                };
-            };
-        }
-        | {
-            every: {
-                name: {
-                    in: string[];
-                };
-            };
-        };
     userId?: string;
 }
 
@@ -35,27 +20,15 @@ export async function GET(req: Request) {
     if (by_user) {
         filters.userId = by_user;
     }
-    if (by_genres.length == 1){
-        filters.genres = {
-            some: {
-                name: {
-                    in: by_genres,
-                },
-            },
-        };
-    }
-    if (by_genres.length > 1){
-        filters.genres = {
-            every: {
-                name: {
-                    in: by_genres,
-                },
-            },
-        };
+
+    let books = await prisma.book.findMany({ include: { genres: true }, where: filters });
+    if (by_genres.length > 0) {
+        books = books.filter(book => {
+            const bookGenres = book.genres.map(genre => genre.name);
+            return by_genres.every(genre => bookGenres.includes(genre));
+        });
     }
 
-
-    const books = await prisma.book.findMany({ where: filters });
     return Response.json(books);
 }
 
@@ -64,7 +37,7 @@ export async function POST(req: Request) {
     const genres = body.genres.map((genreName: string) => ({
         name: genreName
     }));
-    const book = await prisma.book.create({ 
+    const book = await prisma.book.create({
         data: {
             ...body,
             genres: {

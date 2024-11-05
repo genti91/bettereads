@@ -20,11 +20,11 @@ export default async function Bookshelves({ searchParams }: { searchParams: { [k
   }
   return (
     <div className="flex xl:px-80 px-10 py-10 justify-items-center sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
-        <div className="flex gap-10">
-            <BookshelvesMenue userId={session.user.id}/>
-            <Separator orientation="vertical"/>
-            <Books pageNumber={searchParams["page"] ?? '1'} maxPerPage={4} search={searchParams["search_book"] ?? ""} />
-        </div>
+      <div className="flex gap-10">
+        <BookshelvesMenue userId={session.user.id} />
+        <Separator orientation="vertical" />
+        <Books pageNumber={searchParams["page"] ?? '1'} maxPerPage={4} search={searchParams["search_book"] ?? ""} genres={""} />
+      </div>
     </div>
   );
 }
