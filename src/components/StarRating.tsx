@@ -1,4 +1,3 @@
-import { StarFilledIcon } from "@radix-ui/react-icons";
 import { StarIcon } from "lucide-react";
 import { useState } from "react";
 
