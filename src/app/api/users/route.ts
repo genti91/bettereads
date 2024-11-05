@@ -3,7 +3,16 @@ import { prisma } from "@/lib/prisma";
 export async function POST(req: Request) {
     const body = await req.json();
     const user = await prisma.user.create({
-        data: body
+        data: {
+            ...body,
+            shelves: {
+                create: [
+                    { name: "Read" },
+                    { name: "To Read" },
+                    { name: "Reading" },
+                ],
+            }
+        }
     });
     return Response.json(user);
 }

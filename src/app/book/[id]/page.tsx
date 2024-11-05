@@ -19,7 +19,7 @@ export default async function Book({ params }: { params: { id: string } }) {
   }
   return (
     <div className="container flex flex-col gap-9 px-20 py-14">
-      <div className="flex gap-9">
+      <div className="flex gap-9 flex-wrap">
         <img src={book.imageUrl} alt={book.title} className="h-80" />
         <div className="flex flex-col gap-4">
           <h2 className="text-3xl font-bold">{book.title}</h2>
