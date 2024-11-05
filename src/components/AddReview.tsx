@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -68,7 +69,11 @@ export function AddReveiew({ userId, bookId }: { userId: string, bookId: string 
                 <DialogHeader>
                     <DialogTitle>Add Review</DialogTitle>
                 </DialogHeader>
-                <ReviewForm form={form} onSubmit={onSubmit} />
+                <ReviewForm form={form} onSubmit={onSubmit} >
+                    <DialogFooter>
+                        <Button type="submit">Publish</Button>
+                    </DialogFooter>
+                </ReviewForm>
             </DialogContent>
         </Dialog>
     )

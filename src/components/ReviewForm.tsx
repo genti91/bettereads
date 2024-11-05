@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 
 
 
-export function ReviewForm({ form, onSubmit }: { form: any, onSubmit: any }) {
+export function ReviewForm({ form, onSubmit, children, oldRating }: { form: any, onSubmit: any, children: any, oldRating?: number }) {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-8">
@@ -18,7 +18,7 @@ export function ReviewForm({ form, onSubmit }: { form: any, onSubmit: any }) {
                             <FormItem>
                                 <FormLabel>Rating</FormLabel>
                                 <FormControl>
-                                    <StarRating setValue={form.setValue} />
+                                    <StarRating setValue={form.setValue} defaultValue={oldRating} trigger={form.trigger} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -38,9 +38,7 @@ export function ReviewForm({ form, onSubmit }: { form: any, onSubmit: any }) {
                         )}
                     />
                 </div>
-                <DialogFooter>
-                    <Button type="submit">Publish</Button>
-                </DialogFooter>
+                {children}
             </form>
         </Form>
     )
