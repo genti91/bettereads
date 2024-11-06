@@ -16,23 +16,30 @@ interface BooksProps {
     search: string | string[],
     shelfId?: string | string[],
     shlvesUserId?: string,
-    path?: string
+    path?: string,
+    genres: string | string[]
 }
 
 const MAX_PAGINATION = 5;
 
-async function getBooks(search: string, shelfId?: string, shlvesUserId?: string) {
+async function getBooks(search: string, genres: string, shelfId?: string, shlvesUserId?: string) {
+    const genresForFilter: string[] = genres.split(",");
     const queryParams = new URLSearchParams();
     if (search) queryParams.append("title", search);
     if (shelfId) queryParams.append("shelf", shelfId);
     if (shlvesUserId) queryParams.append("all_shelves", shlvesUserId);
+    if (genres) {
+        genresForFilter.forEach(genre => {
+            queryParams.append("by_genres", genre);
+        });
+    }
     const url = `${process.env.APP_URL}/api/books${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
     const response = await fetch(url, { cache: "no-store" });
     return response.json();
 }
 
-export default async function Books({ pageNumber, maxPerPage, search, shelfId, shlvesUserId, path = "" }: BooksProps) {
-    const books = await getBooks(search as string, shelfId as string, shlvesUserId);
+export default async function Books({ pageNumber, maxPerPage, search, shelfId, shlvesUserId, path = "", genres }: BooksProps) {
+    const books = await getBooks(search as string, genres as string, shelfId as string, shlvesUserId);
     const currentPage = Number(pageNumber);
     const start = (currentPage - 1) * maxPerPage;
     const end = start + maxPerPage;

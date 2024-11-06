@@ -2,12 +2,12 @@
 import { Pencil1Icon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog"
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
@@ -20,11 +20,11 @@ import { Review } from "@prisma/client";
 import { ReviewForm } from "./ReviewForm";
 
 const formSchema = z.object({
-    rating: z.number().min(1, "La clasificación es requerida").max(5, "La clasificación no puede ser mayor a 5"),
+    rating: z.number().min(1, "This field is required"),
     description: z.string(),
 })
 
-export default function EditReview({review}: {review: Review}) {
+export default function EditReview({ review }: { review: Review }) {
     const [open, setOpen] = useState(false)
     const { toast } = useToast()
     const form = useForm<z.infer<typeof formSchema>>({
@@ -45,7 +45,7 @@ export default function EditReview({review}: {review: Review}) {
         })
         if (response.ok) {
             toast({
-                description: "Reseña actualizada"
+                description: "Review updated"
             })
             setOpen(false);
             revalidateBook(review.bookId);
@@ -54,7 +54,7 @@ export default function EditReview({review}: {review: Review}) {
                 variant: "destructive",
                 description: "An error occurred"
             })
-       }
+        }
     }
     function valuesChanged() {
         return form.getValues().rating !== review.rating || form.getValues().description !== review.description
@@ -62,16 +62,16 @@ export default function EditReview({review}: {review: Review}) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Pencil1Icon className="cursor-pointer"/>
+                <Pencil1Icon className="cursor-pointer" />
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                <DialogTitle>Añadir reseña</DialogTitle>
+                    <DialogTitle>Add review</DialogTitle>
                 </DialogHeader>
                 <ReviewForm form={form} onSubmit={onSubmit} oldRating={review.rating}>
                     <DialogFooter>
-                        <DeleteReviewButton reviewId={review.id} onClick={() => setOpen(false)}/>
-                        <Button disabled={!valuesChanged()} type="submit">Guardar reseña</Button>
+                        <DeleteReviewButton reviewId={review.id} onClick={() => setOpen(false)} />
+                        <Button disabled={!valuesChanged()} type="submit">Submit</Button>
                     </DialogFooter>
                 </ReviewForm>
             </DialogContent>

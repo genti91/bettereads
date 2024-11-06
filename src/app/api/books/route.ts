@@ -12,9 +12,12 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
     const title = url.searchParams.get("title");
     const by_user = url.searchParams.get("by_user");
+    const by_genres = url.searchParams.getAll("by_genres")
     const shelfId = url.searchParams.get("shelf");
     const shlvesUserId = url.searchParams.get("all_shelves");
+  
     const filters: Filters = {};
+  
     if (title) {
         filters.title = { contains: title };
     }
@@ -26,7 +29,15 @@ export async function GET(req: Request) {
     } else if (shlvesUserId) {
         filters.shelves = { some: { userId: shlvesUserId } };
     }
-    const books = await prisma.book.findMany({ where: filters });
+
+    let books = await prisma.book.findMany({ include: { genres: true }, where: filters });
+    if (by_genres.length > 0) {
+        books = books.filter(book => {
+            const bookGenres = book.genres.map(genre => genre.name);
+            return by_genres.every(genre => bookGenres.includes(genre));
+        });
+    }
+  
     return Response.json(books);
 }
 
@@ -35,7 +46,7 @@ export async function POST(req: Request) {
     const genres = body.genres.map((genreName: string) => ({
         name: genreName
     }));
-    const book = await prisma.book.create({ 
+    const book = await prisma.book.create({
         data: {
             ...body,
             genres: {
