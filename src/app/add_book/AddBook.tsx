@@ -109,7 +109,7 @@ export default function AddBook() {
     if (!session) {
         return (
             <div className="flex justify-center items-center h-96">
-                <h1 className="text-3xl">Necesitas iniciar sesión para agregar un libro</h1>
+                <h1 className="text-3xl">You need to login first to add a book</h1>
             </div>
         );
     }
@@ -194,7 +194,7 @@ export default function AddBook() {
                                     <FormItem>
                                         <FormLabel>Page Amount</FormLabel>
                                         <FormControl>
-                                            <Input 
+                                            <Input
                                                 type="number"
                                                 placeholder="Page Amount" {...field}
                                                 onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
@@ -263,8 +263,8 @@ export default function AddBook() {
                                             key={genre}
                                         >
                                             <div className="flex items-center px-2 py-1 bg-gray-100 rounded-full gap-2">
-                                                {formatGenre(genre)} 
-                                                <FaCircleXmark/>
+                                                {formatGenre(genre)}
+                                                <FaCircleXmark />
                                             </div>
                                         </span>
                                     </button>
