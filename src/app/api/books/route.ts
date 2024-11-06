@@ -5,6 +5,7 @@ interface Filters {
         contains: string;
     };
     userId?: string;
+    shelves?: { some: { id?: string, userId?: string } };
 }
 
 export async function GET(req: Request) {
@@ -12,13 +13,21 @@ export async function GET(req: Request) {
     const title = url.searchParams.get("title");
     const by_user = url.searchParams.get("by_user");
     const by_genres = url.searchParams.getAll("by_genres")
-
+    const shelfId = url.searchParams.get("shelf");
+    const shlvesUserId = url.searchParams.get("all_shelves");
+  
     const filters: Filters = {};
+  
     if (title) {
         filters.title = { contains: title };
     }
     if (by_user) {
         filters.userId = by_user;
+    }
+    if (shelfId) {
+        filters.shelves = { some: { id: shelfId } };
+    } else if (shlvesUserId) {
+        filters.shelves = { some: { userId: shlvesUserId } };
     }
 
     let books = await prisma.book.findMany({ include: { genres: true }, where: filters });
@@ -28,7 +37,7 @@ export async function GET(req: Request) {
             return by_genres.every(genre => bookGenres.includes(genre));
         });
     }
-
+  
     return Response.json(books);
 }
 

@@ -15,12 +15,14 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
     const url = new URL(req.url);
     const userId = url.searchParams.get("userId");
+    const bookId = url.searchParams.get("bookId");
     if (!userId) {
         return new Response("Missing userId", { status: 400 });
     }
     const shelves = await prisma.shelve.findMany({
         where: {
             userId: userId,
+            books: bookId ? { some: { id: bookId } } : undefined,
         },
         include: {
             books: {

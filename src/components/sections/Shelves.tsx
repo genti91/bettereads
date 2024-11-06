@@ -1,9 +1,14 @@
-import { Shelve as PrismaShelve, ShelfType } from "@prisma/client";
+import { ShelfType } from "@prisma/client";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
 
-interface Shelve extends PrismaShelve {
+
+interface Shelve {
+  id: string;
+  name: string;
+  type: ShelfType;
   bookCount: number;
+  books: [{ id: string }];
 }
 
 async function getShelves(userId: string) {
@@ -28,12 +33,20 @@ export default async function Shelves({ userId, showAll, separate }: { userId: s
       console.error(error);
       return <div>Failed to fetch shelves</div>;
   }
-  console.log(defaultShelves);
+
+  let allBooks = new Set();
+  defaultShelves.forEach((shelve: Shelve) => {
+      shelve.books.forEach((book) => allBooks.add(book.id));
+  });
+  customShelves.forEach((shelve: Shelve) => {
+      shelve.books.forEach((book) => allBooks.add(book.id));
+  });
+
   return (
     <>
       {showAll && (
         <Link href={`/bookshelves`} className="text-nowrap">
-          All ({[...defaultShelves, ...customShelves].reduce((acc, shelve) => acc + shelve.bookCount, 0)})
+          All ({allBooks.size})
         </Link>
       )}
       {defaultShelves.map((shelve: Shelve) => (
