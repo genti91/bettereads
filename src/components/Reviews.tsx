@@ -33,7 +33,7 @@ export default async function Reviews({ reviews, bookId }: { reviews: Review[], 
     return (
         <div className="flex flex-col gap-4">
             <h1 className="font-[500] text-2xl">Reviews</h1>
-            <div className="flex gap-8">
+            <div className="flex gap-8 flex-wrap">
                 <div className="flex flex-col gap-3">
                     <div className="flex gap-4 items-center">
                         <h1 className="text-4xl font-bold" >{averageRating}</h1>

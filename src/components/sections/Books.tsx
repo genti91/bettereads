@@ -10,18 +10,29 @@ import {
 import { Book } from "@prisma/client";
 import Link from "next/link";
 
+interface BooksProps {
+    pageNumber: string | string[],
+    maxPerPage: number,
+    search: string | string[],
+    shelfId?: string | string[],
+    shlvesUserId?: string,
+    path?: string
+}
+
 const MAX_PAGINATION = 5;
 
-async function getBooks(search: string) {
-    const response = await fetch(
-        `${process.env.APP_URL}/api/books${search ? `?title=${search}` : ""}`,
-        { cache: "no-store" }
-    );
+async function getBooks(search: string, shelfId?: string, shlvesUserId?: string) {
+    const queryParams = new URLSearchParams();
+    if (search) queryParams.append("title", search);
+    if (shelfId) queryParams.append("shelf", shelfId);
+    if (shlvesUserId) queryParams.append("all_shelves", shlvesUserId);
+    const url = `${process.env.APP_URL}/api/books${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
+    const response = await fetch(url, { cache: "no-store" });
     return response.json();
 }
 
-export default async function Books({ pageNumber, maxPerPage, search }: { pageNumber: string | string[], maxPerPage: number, search: string | string[] }) {
-    const books = await getBooks(search as string);
+export default async function Books({ pageNumber, maxPerPage, search, shelfId, shlvesUserId, path = "" }: BooksProps) {
+    const books = await getBooks(search as string, shelfId as string, shlvesUserId);
     const currentPage = Number(pageNumber);
     const start = (currentPage - 1) * maxPerPage;
     const end = start + maxPerPage;
@@ -73,7 +84,7 @@ export default async function Books({ pageNumber, maxPerPage, search }: { pageNu
             <Pagination>
                 <PaginationContent>
                     <PaginationItem>
-                        <PaginationPrevious href={currentPage === 1 ? "#" : `/?page=${currentPage - 1}`} />
+                        <PaginationPrevious href={currentPage === 1 ? "#" : `${path ? path : "?"}page=${currentPage - 1}`} />
                     </PaginationItem>
 
                     {!paginationRange.includes(1) && <PaginationEllipsis />}
@@ -82,7 +93,7 @@ export default async function Books({ pageNumber, maxPerPage, search }: { pageNu
                         const page = number;
                         return (
                             <PaginationItem key={index}>
-                                <PaginationLink href={currentPage === page ? "#" : `/?page=${page}`} isActive={currentPage === page}>
+                                <PaginationLink href={currentPage === page ? "#" : `${path ? path : "?"}page=${page}`} isActive={currentPage === page}>
                                     {number}
                                 </PaginationLink>
                             </PaginationItem>
@@ -91,7 +102,7 @@ export default async function Books({ pageNumber, maxPerPage, search }: { pageNu
 
                     {!paginationRange.includes(maxPages) && < PaginationEllipsis />}
                     <PaginationItem>
-                        <PaginationNext href={currentPage === maxPages ? "#" : `/?page=${currentPage + 1}`} />
+                        <PaginationNext href={currentPage === maxPages ? "#" : `${path ? path : "?"}page=${currentPage + 1}`} />
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>

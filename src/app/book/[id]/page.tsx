@@ -1,4 +1,8 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { AddBookToShelf } from "@/components/AddBookToShelf";
 import Reviews from "@/components/Reviews";
+import { ShelfType, Shelve } from "@prisma/client";
+import { getServerSession } from "next-auth";
 
 async function getBook(id: string) {
   const response = await fetch(
@@ -8,7 +12,19 @@ async function getBook(id: string) {
   return response.json();
 }
 
+async function getShelves(userId: string, bookId?: string) {
+  const response = await fetch(
+      `${process.env.APP_URL}/api/bookshelves?userId=${userId}` + (bookId ? `&bookId=${bookId}` : ""),
+      { cache: "no-store" }
+  );
+  if (!response.ok) {
+      throw new Error("Failed to fetch shelves");
+  }
+  return response.json();
+}
+
 export default async function Book({ params }: { params: { id: string } }) {
+  const session = await getServerSession(authOptions);
   const book = await getBook(params.id);
   if (!book) {
     return (
@@ -17,9 +33,24 @@ export default async function Book({ params }: { params: { id: string } }) {
       </div>
     );
   }
+
+  let defaultShelves: Shelve[] = [];
+  let customShelves: Shelve[] = [];
+  let shelvesWithBook: Shelve[] = [];
+  if (session) {
+    try {
+        let shelves = await getShelves(session.user.id);
+        shelvesWithBook = await getShelves(session.user.id, book.id);
+        defaultShelves = shelves.filter((shelve: Shelve) => shelve.type === ShelfType.DEFAULT);
+        customShelves = shelves.filter((shelve: Shelve) => shelve.type === ShelfType.CUSTOM);
+    } catch (error) {
+        console.error(error);
+    }
+  }
+
   return (
     <div className="container flex flex-col gap-9 px-20 py-14">
-      <div className="flex gap-9">
+      <div className="flex gap-9 flex-wrap">
         <img src={book.imageUrl} alt={book.title} className="h-80" />
         <div className="flex flex-col gap-4">
           <h2 className="text-3xl font-bold">{book.title}</h2>
@@ -35,6 +66,7 @@ export default async function Book({ params }: { params: { id: string } }) {
               </span>
             ))}
           </div>
+          {session && <AddBookToShelf defaultShelves={defaultShelves} customShelves={customShelves} bookId={book.id} shelvesWithBook={shelvesWithBook} />}
         </div>
       </div>
       <Reviews reviews={book.reviews} bookId={params.id}/>
