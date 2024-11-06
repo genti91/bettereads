@@ -16,7 +16,13 @@ export function ReviewForm({ form, onSubmit, children, oldRating }: { form: any,
                             <FormItem>
                                 <FormLabel>Rating</FormLabel>
                                 <FormControl>
-                                    <StarRating setValue={form.setValue} defaultValue={oldRating} trigger={form.trigger} />
+                                    <StarRating 
+                                        onClick={(value: number) => {
+                                            form.setValue("rating", value)
+                                            form.trigger("rating");
+                                        }}
+                                        defaultValue={oldRating} 
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

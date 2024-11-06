@@ -12,8 +12,10 @@ export default function SearchBar () {
         const params = new URLSearchParams(searchParams);
         if (value) {
             params.set("search_book", value);
+            params.delete("page");
         } else {
             params.delete("search_book");
+            params.delete("page");
         }
         replace(`${pathname}?${params.toString()}`);
     }

@@ -28,18 +28,22 @@ export default function ProfileIconMenue ({profileImage}: {profileImage: string}
         <MenubarContent>
           <MenubarRadioGroup value="">
             <Link href="/profile">
-              <MenubarRadioItem className="cursor-pointer" value="mi_perfil">Mi Perfil</MenubarRadioItem>
+              <MenubarRadioItem className="cursor-pointer" value="mi_perfil">My profile</MenubarRadioItem>
+            </Link>
+            <MenubarSeparator />
+            <Link href="/bookshelves">
+              <MenubarRadioItem className="cursor-pointer" value="añadir_libro">Shelves</MenubarRadioItem>
             </Link>
             <MenubarSeparator />
             <Link href="/my_books">
-              <MenubarRadioItem className="cursor-pointer" value="mis_libros">Mis libros</MenubarRadioItem>
+              <MenubarRadioItem className="cursor-pointer" value="mis_libros">My books</MenubarRadioItem>
             </Link>
             <Link href="/add_book">
-              <MenubarRadioItem className="cursor-pointer" value="añadir_libro">Añadir libro</MenubarRadioItem>
+              <MenubarRadioItem className="cursor-pointer" value="añadir_libro">Add book</MenubarRadioItem>
             </Link>
           </MenubarRadioGroup>
           <MenubarSeparator />
-          <MenubarItem className="cursor-pointer" onClick={() => signOut()} inset>Cerrar sesión</MenubarItem>
+          <MenubarItem className="cursor-pointer" onClick={() => signOut()} inset>Log out</MenubarItem>
         </MenubarContent>
       </MenubarMenu>
     </Menubar>

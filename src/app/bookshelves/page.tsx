@@ -43,6 +43,7 @@ export default async function Bookshelves({ searchParams }: { searchParams: { [k
               shlvesUserId={!searchParams["shelf"] ? session.user.id : undefined}
               path={currentPath}
               genres={""}
+              rating={0}
             />
         </div>
     </div>

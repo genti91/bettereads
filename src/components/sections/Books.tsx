@@ -17,17 +17,19 @@ interface BooksProps {
     shelfId?: string | string[],
     shlvesUserId?: string,
     path?: string,
-    genres: string | string[]
+    genres: string | string[],
+    rating: number,
 }
 
 const MAX_PAGINATION = 5;
 
-async function getBooks(search: string, genres: string, shelfId?: string, shlvesUserId?: string) {
+async function getBooks(search: string, genres: string, rating: number, shelfId?: string, shlvesUserId?: string) {
     const genresForFilter: string[] = genres.split(",");
     const queryParams = new URLSearchParams();
     if (search) queryParams.append("title", search);
     if (shelfId) queryParams.append("shelf", shelfId);
     if (shlvesUserId) queryParams.append("all_shelves", shlvesUserId);
+    if (rating > 0) queryParams.append("rating", rating.toString());
     if (genres) {
         genresForFilter.forEach(genre => {
             queryParams.append("by_genres", genre);
@@ -38,8 +40,8 @@ async function getBooks(search: string, genres: string, shelfId?: string, shlves
     return response.json();
 }
 
-export default async function Books({ pageNumber, maxPerPage, search, shelfId, shlvesUserId, path = "", genres }: BooksProps) {
-    const books = await getBooks(search as string, genres as string, shelfId as string, shlvesUserId);
+export default async function Books({ pageNumber, maxPerPage, search, shelfId, shlvesUserId, path = "", genres, rating }: BooksProps) {
+    const books = await getBooks(search as string, genres as string, rating, shelfId as string, shlvesUserId);
     const currentPage = Number(pageNumber);
     const start = (currentPage - 1) * maxPerPage;
     const end = start + maxPerPage;
@@ -86,6 +88,18 @@ export default async function Books({ pageNumber, maxPerPage, search, shelfId, s
                         </div>
                     </Link>
                 ))}
+                {paginatedBooks.length < maxPerPage && (
+                    <>
+                        {Array(maxPerPage - paginatedBooks.length).fill(0).map((_, index) => (
+                            <div key={index} className="flex flex-row p-4 border-b-2 border-white ">
+                                <div className="flex flex-row">
+                                    <div className="w-24 h-32 " />
+                                    <div className="flex flex-col ml-4"/>
+                                </div>
+                            </div>
+                        ))}
+                    </>
+                )}
             </div>
 
             <Pagination>

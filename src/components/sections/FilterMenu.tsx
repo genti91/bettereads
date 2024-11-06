@@ -1,15 +1,7 @@
 "use client"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
 import { useState, useEffect } from "react"
 import { useToast } from "@/hooks/use-toast"
-import { Button } from "@/components/ui/button"
-import { FaFilter } from "react-icons/fa";
-import { FaCircleXmark } from "react-icons/fa6";
-import { Check, ChevronsUpDown } from "lucide-react"
+import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 import {
@@ -21,42 +13,19 @@ import {
     CommandList,
 } from "@/components/ui/command"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { RatingFilter } from "../RatingFilter"
+import { Separator } from "../ui/separator"
+import { Label } from "../ui/label"
+import { Genre } from "@prisma/client"
 
-const MAX_PAGINATION = 5;
-
-export default function FilterMenu({
-    pageNumber,
-    maxPerPage,
-}: {
-    pageNumber: string | string[];
-    maxPerPage: number;
-}) {
-    const [genres, setGenres] = useState<string[]>([]);
-    const { toast } = useToast()
-
-    useEffect(() => {
-        const fetchGenres = async () => {
-            const response = await fetch(`/api/genres`);
-            if (response.ok) {
-                const genresData = await response.json();
-                genresData.sort();
-                setGenres(genresData);
-            } else {
-                toast({
-                    variant: "destructive",
-                    description: "Error loading genres data",
-                });
-            }
-        };
-        fetchGenres();
-    }, [toast]);
+export default function FilterMenu({ genres, oldSelectedGenres, oldRating }: { genres: string[], oldSelectedGenres: string, oldRating: number }) {
 
     function formatGenre(string: string | undefined) {
         if (!string) return "";
         return string[0] + string.slice(1).toLowerCase();
     }
 
-    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+    const [selectedGenres, setSelectedGenres] = useState<string[]>(oldSelectedGenres ? oldSelectedGenres.split(",") : []);
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
@@ -64,8 +33,10 @@ export default function FilterMenu({
         const params = new URLSearchParams(searchParams);
         if (selectedGenres.length > 0) {
             params.set("genres_filter", selectedGenres.join(","));
+            params.delete("page");
         } else {
             params.delete("genres_filter");
+            params.delete("page");
         }
         replace(`${pathname}?${params.toString()}`);
     }
@@ -74,10 +45,11 @@ export default function FilterMenu({
     }, [selectedGenres]);
 
     return (
-        <div className="flex">
-            <Command>
-                <CommandInput placeholder="Filter by genre..." />
-                <CommandList>
+        <div className="flex flex-col gap-7">
+            <Command className="h-56 gap-1">
+                <Label className="text-slate-700">Filter by Genre:</Label>
+                <CommandInput placeholder="Search genre..." />
+                <CommandList className="custom-scrollbar">
                     <CommandEmpty>No genre found.</CommandEmpty>
                     <CommandGroup>
                         {genres.map((genre: string) => (
@@ -104,6 +76,8 @@ export default function FilterMenu({
                     </CommandGroup>
                 </CommandList>
             </Command>
+            <Separator />
+            <RatingFilter oldValue={oldRating}/>
         </div>
     )
 }
