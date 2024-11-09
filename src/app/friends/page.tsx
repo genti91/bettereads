@@ -7,6 +7,7 @@ import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import { User } from "@prisma/client";
 import FollowBackButton from "@/components/FollowBackButton";
 import UnfollowButton from "@/components/UnfollowButton";
+import Link from "next/link";
 
 interface Follow {
     followerId: string;
@@ -65,16 +66,18 @@ export default async function Friends() {
                 {following.map(({following, followingId}) => (
                     <>
                         <div className="flex items-center gap-4 justify-between">
-                            <div className="flex items-center gap-4">
-                                <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
-                                    <AvatarImage src={following.picture ?? ""}/>
-                                    <AvatarFallback>{following.name[0]}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                <h2>{following.name}</h2>
-                                <p className="text-sm text-gray-6s00">@{following.username}</p>
+                            <Link href={`/profile/${following.username}`}>
+                                <div className="flex items-center gap-4">
+                                    <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
+                                        <AvatarImage src={following.picture ?? ""}/>
+                                        <AvatarFallback>{following.name[0]}</AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                    <h2>{following.name}</h2>
+                                    <p className="text-sm text-gray-6s00">@{following.username}</p>
+                                    </div>
                                 </div>
-                            </div>
+                            </Link>
                             <UnfollowButton userId={session.user.id} followingId={followingId}/>
                         </div>
                         <Separator/>
@@ -91,16 +94,18 @@ export default async function Friends() {
                 {followers.map(({follower, followerId}) => (
                     <>
                         <div className="flex items-center gap-4 justify-between">
-                            <div className="flex items-center gap-4">
-                                <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
-                                    <AvatarImage src={follower.picture ?? ""}/>
-                                    <AvatarFallback>{follower.name[0]}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <h2>{follower.name}</h2>
-                                    <p className="text-sm text-gray-6s00">@{follower.username}</p>
+                            <Link href={`/profile/${follower.username}`}>
+                                <div className="flex items-center gap-4">
+                                    <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
+                                        <AvatarImage src={follower.picture ?? ""}/>
+                                        <AvatarFallback>{follower.name[0]}</AvatarFallback>
+                                    </Avatar>
+                                        <div>
+                                            <h2>{follower.name}</h2>
+                                            <p className="text-sm text-gray-6s00">@{follower.username}</p>
+                                        </div>
                                 </div>
-                            </div>
+                            </Link>
                             {following.some(({followingId}) => followingId === followerId) ? 
                                 <UnfollowButton userId={session.user.id} followingId={followerId}/>
                                 :

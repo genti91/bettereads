@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { revalidateFollows } from "@/lib/actions";
 
-export default function FollowBackButton({userId, followerId}: {userId: string, followerId: string}) {
+export default function FollowBackButton({userId, followerId, title }: {userId: string, followerId: string, title?: string}) {
     async function handleFollow() {
         try {
             const res = await fetch(`/api/follow`, {
@@ -23,6 +23,6 @@ export default function FollowBackButton({userId, followerId}: {userId: string, 
         }
     }
     return (
-        <Button className="h-7" onClick={handleFollow}>Follow Back</Button>                  
+        <Button className="h-7" onClick={handleFollow}>{title ?? "Follow Back"}</Button>                  
   );
 }
