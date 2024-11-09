@@ -9,37 +9,60 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Button } from "./ui/button"
 import { useRouter } from "next/navigation"
+import { revalidateFollows } from "@/lib/actions"
+import { Follows, User } from "@prisma/client"
 
-async function getFriends(username: string, setUsers: (users: any) => void) {
+async function getFriends(username: string, setUsers: (users: any) => void, following: Follows[]) {
     if (username === "") {
         setUsers([]);
         return;
     }
     try {
         const res = await fetch(`/api/users?username=${username}`);
-        const data = await res.json();
-        setUsers(data);
+        let users = await res.json();
+        users = users.filter((user: User) => !following.some((follow: Follows) => follow.followingId === user.id));
+        setUsers(users);
     } catch (error) {
         console.error(error);
         setUsers([]);
     }
 }
 
-export default function AddFriends() {
-    const [users, setUsers] = useState<string[]>([]);
+export default function AddFriends({following, userId}: {following: Follows[], userId: string}) {
+    const [users, setUsers] = useState<User[]>([]);
     const [searchedUsers, setSearchedUsers] = useState<string>("");
     const router = useRouter();
     useEffect(() => {
-        getFriends(searchedUsers, setUsers);
+        getFriends(searchedUsers, setUsers, following);
+        console.log(users);
     }, [searchedUsers])
-
+    async function handleFollow(id: string) {
+        try {
+            const res = await fetch(`/api/follow`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    followerId: userId,
+                    followingId: id,
+                }),
+            });
+            if (res.ok) {
+                revalidateFollows();
+                setUsers(users.filter((user:User) => user.id !== id));
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
     return (
         <Command className="h-56 gap-1">
             <CommandInput placeholder="Search by username" onChangeCapture={(e) => setSearchedUsers(e.currentTarget.value)} />
             <CommandList className="custom-scrollbar">
                 {(users.length === 0 && searchedUsers !== "") && <CommandEmpty>No Users found.</CommandEmpty>}
                 <div>
-                    {users.map((user: any) => (
+                    {users.map((user: User) => (
                         <div
                             key={user.id}
                             className="flex flex-col gap-2 p-2 hover:bg-slate-100 rounded-md"
@@ -50,12 +73,12 @@ export default function AddFriends() {
                                     onClick={() => router.push(`/profile/${user.username}`)}
                                 >
                                     <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
-                                        <AvatarImage src={user.picture} />
+                                        <AvatarImage src={user.picture ?? ""} />
                                         <AvatarFallback>{user.name[0]}</AvatarFallback>
                                     </Avatar>
                                     <p>{user.username}</p>
                                 </div>
-                                <Button className="h-7">Follow</Button>
+                                <Button className="h-7" onClick={() => handleFollow(user.id)}>Follow</Button>
                             </div>
                         </div>
                     ))}
