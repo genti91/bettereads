@@ -1,9 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: Request, { params }: { params: { userId: string } }) {
-    console.log("====================================");
-    console.log(params.userId);
-    console.log("====================================");
     const followers = await prisma.follows.findMany({
         where: { followingId: params.userId },
         include: {

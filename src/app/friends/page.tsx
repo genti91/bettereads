@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import { User } from "@prisma/client";
 import FollowBackButton from "@/components/FollowBackButton";
+import UnfollowButton from "@/components/UnfollowButton";
 
 interface Follow {
     followerId: string;
@@ -61,17 +62,20 @@ export default async function Friends() {
             <div className="flex flex-col gap-4">
                 <Separator/>
                 {following.length === 0 && <p>You don't follow anyone yet</p>}
-                {following.map(({following}) => (
+                {following.map(({following, followingId}) => (
                     <>
-                        <div className="flex items-center gap-4">
-                            <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
-                                <AvatarImage src={following.picture ?? ""}/>
-                                <AvatarFallback>{following.name[0]}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                            <h2>{following.name}</h2>
-                            <p className="text-sm text-gray-6s00">@{following.username}</p>
+                        <div className="flex items-center gap-4 justify-between">
+                            <div className="flex items-center gap-4">
+                                <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
+                                    <AvatarImage src={following.picture ?? ""}/>
+                                    <AvatarFallback>{following.name[0]}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                <h2>{following.name}</h2>
+                                <p className="text-sm text-gray-6s00">@{following.username}</p>
+                                </div>
                             </div>
+                            <UnfollowButton userId={session.user.id} followingId={followingId}/>
                         </div>
                         <Separator/>
                     </>
@@ -86,19 +90,22 @@ export default async function Friends() {
                 {followers.length === 0 && <p>You don't have any followers yet</p>}
                 {followers.map(({follower, followerId}) => (
                     <>
-                        <div className="flex items-center gap-4">
-                            <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
-                                <AvatarImage src={follower.picture ?? ""}/>
-                                <AvatarFallback>{follower.name[0]}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <h2>{follower.name}</h2>
-                                {following.some(({followingId}) => followingId === followerId) ? 
+                        <div className="flex items-center gap-4 justify-between">
+                            <div className="flex items-center gap-4">
+                                <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
+                                    <AvatarImage src={follower.picture ?? ""}/>
+                                    <AvatarFallback>{follower.name[0]}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <h2>{follower.name}</h2>
                                     <p className="text-sm text-gray-6s00">@{follower.username}</p>
-                                    :
-                                    <FollowBackButton userId={session.user.id} followerId={followerId}/>
-                                }
+                                </div>
                             </div>
+                            {following.some(({followingId}) => followingId === followerId) ? 
+                                <UnfollowButton userId={session.user.id} followingId={followerId}/>
+                                :
+                                <FollowBackButton userId={session.user.id} followerId={followerId}/>
+                            }
                         </div>
                         <Separator/>
                     </>
