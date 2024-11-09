@@ -43,7 +43,7 @@ export default async function NavBar() {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <ProfileIconMenue profileImage={session?.user.image ?? ""} /> 
+              <ProfileIconMenue profileImage={session?.user.image ?? ""} name={session?.user.name ?? ""}/>
             </div>
             :
             <Link href="/auth/login">

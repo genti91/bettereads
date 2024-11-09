@@ -11,17 +11,21 @@ export default async function Friends({ searchParams }: { searchParams: { [key: 
         <div className="flex flex-col gap-4">
             <h1 className="text-xl">Friends you follow</h1>
             <div className="flex flex-col gap-4">
+                <Separator/>
                 {Array.from({length: 5}, (_, i) => (
-                    <div className="flex items-center gap-4">
-                        <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
-                            <AvatarImage src={"https://github.com/shadcn.png"}/>
-                            <AvatarFallback>P</AvatarFallback>
-                        </Avatar>
-                        <div>
-                        <h2>John Doe</h2>
-                        
+                    <>
+                        <div className="flex items-center gap-4">
+                            <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
+                                <AvatarImage src={"https://github.com/shadcn.png"}/>
+                                <AvatarFallback>P</AvatarFallback>
+                            </Avatar>
+                            <div>
+                            <h2>John Doe</h2>
+                            
+                            </div>
                         </div>
-                    </div>
+                        <Separator/>
+                    </>
                 ))}
             </div>
         </div>
@@ -29,17 +33,21 @@ export default async function Friends({ searchParams }: { searchParams: { [key: 
         <div className="flex flex-col gap-4">
             <h1 className="text-xl">Peopel that follow you</h1>
             <div className="flex flex-col gap-4">
+                <Separator/>
                 {Array.from({length: 5}, (_, i) => (
-                    <div className="flex items-center gap-4">
-                        <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
-                            <AvatarImage src={"https://github.com/shadcn.png"}/>
-                            <AvatarFallback>P</AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <h2>John Doe</h2>
-                            <Button className="h-7">Follow Back</Button>
+                    <>
+                        <div className="flex items-center gap-4">
+                            <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
+                                <AvatarImage src={"https://github.com/shadcn.png"}/>
+                                <AvatarFallback>P</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <h2>John Doe</h2>
+                                <Button className="h-7">Follow Back</Button>
+                            </div>
                         </div>
-                    </div>
+                        <Separator/>
+                    </>
                 ))}
             </div>
         </div>
