@@ -7,6 +7,9 @@ import { Separator } from "@/components/ui/separator"
 import Shelves from "@/components/sections/Shelves";
 import { User } from "@prisma/client";
 import FollowBackButton from "@/components/FollowBackButton";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import UnfollowButton from "@/components/UnfollowButton";
 
 async function getUserData(username: string) {
   try {
@@ -15,6 +18,18 @@ async function getUserData(username: string) {
   } catch (error) {
     console.error(error)
     throw new Error("Error fetching user data")
+  }
+}
+
+async function isFollowed(userId: string, followerId: string) {
+  try {
+    const res = await fetch(`${process.env.APP_URL}/api/following/${userId}?followingId=${followerId}`)
+    const followers = await res.json();
+    console.log(followers)
+    return followers.length > 0;
+  } catch (error) {
+    console.error(error)
+    return false;
   }
 }
 
@@ -32,6 +47,12 @@ export default async function Page({ params }: { params: { username: string } })
         )
     }
 
+    let isUserFollowed = false;
+    const session = await getServerSession(authOptions);
+    if (session) {
+        isUserFollowed = await isFollowed(session.user.id, user.id);
+    }
+
   return (
     <div className="grid xl:px-80 lg:py-20 px-10 py-10 font-[family-name:var(--font-geist-sans)]">
       <div className="flex gap-10 flex-wrap">
@@ -42,7 +63,15 @@ export default async function Page({ params }: { params: { username: string } })
         <div className="flex flex-col gap-4 w-2/3">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">{user.name}</h1>
-            <FollowBackButton userId={user.id} followerId={user.id} title="Follow"/>
+            {session && 
+              <>
+                {isUserFollowed ? 
+                  <UnfollowButton userId={session.user.id} followingId={user.id}/>
+                  :
+                  <FollowBackButton userId={session.user.id} followerId={user.id} title="Follow"/>
+                }
+              </>
+            }
           </div>
           <Separator />
           <h2 className="text-xl font-bold underline">Bookshelves:</h2>
