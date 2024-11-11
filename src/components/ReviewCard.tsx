@@ -16,13 +16,13 @@ export default function ReviewCard({ review, owned }: { review: Review, owned?: 
     return (
         <div className="flex flex-row gap-2 w-full border shadow rounded-xl">
             {review.Book && (
-                <>
+                <div className="flex">
                     <Link href={`/book/${review.Book.id}`} className="flex gap-2 items-center w-40 flex-col text-center py-4">
                         <img src={review.Book.imageUrl} alt={review.Book.title} className="w-24 h-32" />
                         <p className="px-2">{review.Book.title}</p>
                     </Link>
                     <Separator orientation="vertical" />
-                </>
+                </div>
             )}
             <Card key={review.id} className="w-full border-none shadow-none">
                 <CardHeader className="pb-3 gap-1">
