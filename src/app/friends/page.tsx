@@ -87,7 +87,7 @@ export default async function Friends() {
         </div>
         <Separator orientation="vertical" />
         <div className="flex flex-col gap-4">
-            <h1 className="text-xl">Peopel that follow you</h1>
+            <h1 className="text-xl">People that follow you</h1>
             <div className="flex flex-col gap-4">
                 <Separator/>
                 {followers.length === 0 && <p>You don't have any followers yet</p>}

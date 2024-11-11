@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Separator } from "../ui/separator";
 
 
-interface Shelve {
+interface Shelf {
   id: string;
   name: string;
   type: ShelfType;
@@ -23,22 +23,22 @@ async function getShelves(userId: string) {
 }
 
 export default async function Shelves({ userId, showAll, separate, path }: { userId: string, showAll?: boolean, separate?: boolean, path?: string }) {
-  let defaultShelves: Shelve[];
-  let customShelves: Shelve[];
+  let defaultShelves: Shelf[];
+  let customShelves: Shelf[];
   try {
       let shelves = await getShelves(userId);
-      defaultShelves = shelves.filter((shelve: Shelve) => shelve.type === ShelfType.DEFAULT);
-      customShelves = shelves.filter((shelve: Shelve) => shelve.type === ShelfType.CUSTOM);
+      defaultShelves = shelves.filter((shelve: Shelf) => shelve.type === ShelfType.DEFAULT);
+      customShelves = shelves.filter((shelve: Shelf) => shelve.type === ShelfType.CUSTOM);
   } catch (error) {
       console.error(error);
       return <div>Failed to fetch shelves</div>;
   }
 
   let allBooks = new Set();
-  defaultShelves.forEach((shelve: Shelve) => {
+  defaultShelves.forEach((shelve: Shelf) => {
       shelve.books.forEach((book) => allBooks.add(book.id));
   });
-  customShelves.forEach((shelve: Shelve) => {
+  customShelves.forEach((shelve: Shelf) => {
       shelve.books.forEach((book) => allBooks.add(book.id));
   });
 
@@ -49,13 +49,13 @@ export default async function Shelves({ userId, showAll, separate, path }: { use
           All ({allBooks.size})
         </Link>
       )}
-      {defaultShelves.map((shelve: Shelve) => (
+      {defaultShelves.map((shelve: Shelf) => (
         <Link key={shelve.id} href={{pathname: path, query: {shelf: shelve.id}}} className="text-nowrap">
           {shelve.name} ({shelve.bookCount})
         </Link>
       ))}
       {(separate && customShelves.length > 0) && <Separator />}
-      {customShelves.map((shelve: Shelve) => (
+      {customShelves.map((shelve: Shelf) => (
         <Link key={shelve.id} href={{query: {pathname: path, shelf: shelve.id}}} className="text-nowrap">
           {shelve.name} ({shelve.bookCount})
         </Link>

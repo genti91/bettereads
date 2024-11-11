@@ -45,9 +45,11 @@ export default async function Page() {
             </Link>
           </div>
           <Separator />
-            <h2 className="text-xl font-bold underline">Bookshelves:</h2>
+            <Link href="/bookshelves">
+              <h2 className="text-xl font-bold underline">Bookshelves:</h2>
+            </Link>
             <div className="flex gap-6 flex-row flex-wrap">
-              <Shelves userId={session.user.id} />
+              <Shelves userId={session.user.id} path="/bookshelves" />
             </div>
         </div>
       </div>

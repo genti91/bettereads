@@ -6,46 +6,46 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Separator } from "./ui/separator"
-import { Shelve } from "@prisma/client";
+import { Shelf } from "@prisma/client";
 import { useState } from "react";
 import { revalidateShelves } from "@/lib/actions";
 
-function addOrRemoveBook(bookId: string, shelfId: string, action: "add" | "remove") {
+function addOrRemoveBook(bookId: string, shelfId: string, action: "add" | "remove", userId: string) {
     fetch("/api/addToShelf", {
         method: action === "add" ? "POST" : "DELETE",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ bookId, shelfId }),
+        body: JSON.stringify({ bookId, shelfId, userId }),
     });
 }
 
-export function AddBookToShelf({ defaultShelves,  customShelves, bookId, shelvesWithBook }: { defaultShelves: Shelve[], customShelves: Shelve[], bookId: string, shelvesWithBook: Shelve[] }) {
-    const [selectedShelf, setSelectedShelf] = useState<Shelve | undefined>(shelvesWithBook.find((shelf) => shelf.type === "DEFAULT") || undefined);
-    const [selectedCustomShelf, setSelectedCustomShelf] = useState<Shelve[]>(shelvesWithBook.filter((shelf) => shelf.type === "CUSTOM"));
-    function handleShelfClick(isSelected: boolean, shelf: Shelve) {
+export function AddBookToShelf({ defaultShelves,  customShelves, bookId, shelvesWithBook, userId }: { defaultShelves: Shelf[], customShelves: Shelf[], bookId: string, shelvesWithBook: Shelf[], userId: string }) {
+    const [selectedShelf, setSelectedShelf] = useState<Shelf | undefined>(shelvesWithBook.find((shelf) => shelf.type === "DEFAULT") || undefined);
+    const [selectedCustomShelf, setSelectedCustomShelf] = useState<Shelf[]>(shelvesWithBook.filter((shelf) => shelf.type === "CUSTOM"));
+    function handleShelfClick(isSelected: boolean, shelf: Shelf) {
         if (isSelected) {
-            addOrRemoveBook(bookId, shelf.id, "remove");
+            addOrRemoveBook(bookId, shelf.id, "remove", userId);
             setSelectedShelf(undefined);
         } else {
             if (selectedShelf) {
-                addOrRemoveBook(bookId, selectedShelf.id, "remove");
+                addOrRemoveBook(bookId, selectedShelf.id, "remove", userId);
             }
-            addOrRemoveBook(bookId, shelf.id, "add");
+            addOrRemoveBook(bookId, shelf.id, "add", userId);
             setSelectedShelf(shelf);
         }
     }
-    function handleCustomShelfClick(isSelected: boolean, shelf: Shelve) {
+    function handleCustomShelfClick(isSelected: boolean, shelf: Shelf) {
         if (isSelected) {
-            addOrRemoveBook(bookId, shelf.id, "remove");
+            addOrRemoveBook(bookId, shelf.id, "remove", userId);
             setSelectedCustomShelf(selectedCustomShelf.filter((sh) => sh.id !== shelf.id));
         } else {
-            addOrRemoveBook(bookId, shelf.id, "add");
+            addOrRemoveBook(bookId, shelf.id, "add", userId);
             setSelectedCustomShelf([...selectedCustomShelf, shelf]);
         }
     }
     function removeBook(bookId: string, shelfId: string) {
-        addOrRemoveBook(bookId, shelfId, "remove");
+        addOrRemoveBook(bookId, shelfId, "remove", userId);
         if (selectedShelf?.id === shelfId) {
             setSelectedShelf(undefined);
         } else {
@@ -56,7 +56,7 @@ export function AddBookToShelf({ defaultShelves,  customShelves, bookId, shelves
   return (
     <Dialog onOpenChange={(open) => !open && revalidateShelves()}>
         <div className="flex gap-4 items-center">
-            {[...selectedCustomShelf, ...(selectedShelf ? [selectedShelf] : [])].map((shelf: Shelve) => (
+            {[...selectedCustomShelf, ...(selectedShelf ? [selectedShelf] : [])].map((shelf: Shelf) => (
                 <div className="bg-gray-200 p-1 px-3 rounded-2xl flex gap-2 items-center">
                     <p>{shelf.name}</p>
                     <CrossCircledIcon className="w-4 h-4 cursor-pointer" onClick={() => removeBook(bookId, shelf.id)}/>
@@ -72,7 +72,7 @@ export function AddBookToShelf({ defaultShelves,  customShelves, bookId, shelves
         <div className="flex flex-col gap-3">
         <h2 className="text-lg font-bold">Add to Shelf</h2>
             <div className="flex items-center gap-2 flex-wrap">
-                {defaultShelves.map((shelf: Shelve) => {
+                {defaultShelves.map((shelf: Shelf) => {
                     let isSelected = selectedShelf?.id === shelf.id;
                     return (
                         <button 
@@ -96,7 +96,7 @@ export function AddBookToShelf({ defaultShelves,  customShelves, bookId, shelves
         <div className="flex flex-col gap-3">
         <h2 className="text-lg font-bold">Add to Custom Shelf</h2>
             <div className="flex items-center gap-2 flex-wrap">
-            {customShelves.map((shelf: Shelve) => {
+            {customShelves.map((shelf: Shelf) => {
                     let isSelected = selectedCustomShelf.includes(shelf);
                     return (
                         <button 

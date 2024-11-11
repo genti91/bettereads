@@ -10,6 +10,9 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 }
 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+    await prisma.activity.deleteMany({
+        where: { reviewId: params.id }
+    });
     const review = await prisma.review.delete({
         where: { id: params.id }
     });

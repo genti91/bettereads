@@ -2,14 +2,14 @@ import BookshelvesMenue from "@/components/BookshelvesMenue";
 import Books from "@/components/sections/Books";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ShelfType, Shelve as PrismaShelve } from "@prisma/client";
+import { ShelfType, Shelf as PrismaShelf } from "@prisma/client";
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import EditShelf from "@/components/EditShelf";
 
-interface Shelve extends PrismaShelve {
+interface Shelf extends PrismaShelf {
     bookCount: number;
 }
 
@@ -29,12 +29,12 @@ export default async function EditShelves({ searchParams }: { searchParams: { [k
     if (!session) {
         return <div>Unauthorized</div>;
     }
-    let defaultShelves: Shelve[];
-    let customShelves: Shelve[];
+    let defaultShelves: Shelf[];
+    let customShelves: Shelf[];
     try {
         let shelves = await getShelves(session.user.id);
-        defaultShelves = shelves.filter((shelve: Shelve) => shelve.type === ShelfType.DEFAULT);
-        customShelves = shelves.filter((shelve: Shelve) => shelve.type === ShelfType.CUSTOM);
+        defaultShelves = shelves.filter((shelf: Shelf) => shelf.type === ShelfType.DEFAULT);
+        customShelves = shelves.filter((shelf: Shelf) => shelf.type === ShelfType.CUSTOM);
     } catch (error) {
         console.error(error);
         return <div>Failed to fetch shelves</div>;
@@ -45,7 +45,7 @@ export default async function EditShelves({ searchParams }: { searchParams: { [k
             <h2 className="text-2xl font-bold">My Shelves</h2>
             <div className="flex flex-col w-2/3 self-center gap-2">
                 {customShelves.length === 0 && <div>No custom shelves</div>}
-                {[...customShelves].map( (shelve: Shelve) => (
+                {[...customShelves].map( (shelve: Shelf) => (
                     <>
                         <Separator />
                         <div className="flex justify-between">

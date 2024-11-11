@@ -1,15 +1,24 @@
 import { prisma } from "@/lib/prisma";
+import { ActivityType } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-    const { bookId, shelfId } = await req.json();
+    const { bookId, shelfId, userId } = await req.json();
 
-    if (!bookId || !shelfId) {
-        return NextResponse.json({ error: "Missing bookId or shelfId" }, { status: 400 });
+    if (!bookId || !shelfId || !userId) {
+        return NextResponse.json({ error: "Missing bookId, shelfId or userId" }, { status: 400 });
     }
 
     try {
-        const updatedShelf = await prisma.shelve.update({
+        await prisma.activity.create({
+            data: {
+                type: ActivityType.ADD_TO_SHELF,
+                userId,
+                bookId,
+                shelfId: shelfId
+            }
+        });
+        const updatedShelf = await prisma.shelf.update({
             where: { id: shelfId },
             data: {
                 books: {
@@ -26,14 +35,22 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-    const { bookId, shelfId } = await req.json();
+    const { bookId, shelfId, userId } = await req.json();
 
-    if (!bookId || !shelfId) {
-        return NextResponse.json({ error: "Missing bookId or shelfId" }, { status: 400 });
+    if (!bookId || !shelfId || !userId) {
+        return NextResponse.json({ error: "Missing bookId, shelfId or userId" }, { status: 400 });
     }
 
     try {
-        const updatedShelf = await prisma.shelve.update({
+        await prisma.activity.deleteMany({
+            where: {
+                type: ActivityType.ADD_TO_SHELF,
+                userId,
+                bookId,
+                shelfId: shelfId
+            }
+        });
+        const updatedShelf = await prisma.shelf.update({
             where: { id: shelfId },
             data: {
                 books: {

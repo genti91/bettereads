@@ -1,7 +1,7 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { AddBookToShelf } from "@/components/AddBookToShelf";
 import Reviews from "@/components/Reviews";
-import { ShelfType, Shelve } from "@prisma/client";
+import { ShelfType, Shelf } from "@prisma/client";
 import { getServerSession } from "next-auth";
 
 async function getBook(id: string) {
@@ -34,15 +34,15 @@ export default async function Book({ params }: { params: { id: string } }) {
     );
   }
 
-  let defaultShelves: Shelve[] = [];
-  let customShelves: Shelve[] = [];
-  let shelvesWithBook: Shelve[] = [];
+  let defaultShelves: Shelf[] = [];
+  let customShelves: Shelf[] = [];
+  let shelvesWithBook: Shelf[] = [];
   if (session) {
     try {
         let shelves = await getShelves(session.user.id);
         shelvesWithBook = await getShelves(session.user.id, book.id);
-        defaultShelves = shelves.filter((shelve: Shelve) => shelve.type === ShelfType.DEFAULT);
-        customShelves = shelves.filter((shelve: Shelve) => shelve.type === ShelfType.CUSTOM);
+        defaultShelves = shelves.filter((shelve: Shelf) => shelve.type === ShelfType.DEFAULT);
+        customShelves = shelves.filter((shelve: Shelf) => shelve.type === ShelfType.CUSTOM);
     } catch (error) {
         console.error(error);
     }
@@ -66,7 +66,7 @@ export default async function Book({ params }: { params: { id: string } }) {
               </span>
             ))}
           </div>
-          {session && <AddBookToShelf defaultShelves={defaultShelves} customShelves={customShelves} bookId={book.id} shelvesWithBook={shelvesWithBook} />}
+          {session && <AddBookToShelf userId={session.user.id} defaultShelves={defaultShelves} customShelves={customShelves} bookId={book.id} shelvesWithBook={shelvesWithBook} />}
         </div>
       </div>
       <Reviews reviews={book.reviews} bookId={params.id}/>
