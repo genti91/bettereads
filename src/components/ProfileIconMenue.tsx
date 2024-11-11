@@ -14,7 +14,7 @@ import {
 import { signOut } from "next-auth/react";
 
 
-export default function ProfileIconMenue ({profileImage}: {profileImage: string}) {
+export default function ProfileIconMenue ({profileImage, name}: {profileImage: string, name: string}) {
   return (
     <div>
       <Menubar className="shadow-none space-x-0 p-0 border-none">
@@ -22,7 +22,7 @@ export default function ProfileIconMenue ({profileImage}: {profileImage: string}
         <MenubarTrigger className="px-0 py-0 focus:bg-white data-[state=open]:bg-white cursor-pointer">
           <Avatar className="bg-slate-200 items-center justify-center hover:bg-slate-100">
             <AvatarImage src={profileImage}/>
-            <AvatarFallback>P</AvatarFallback>
+            <AvatarFallback>{name[0]}</AvatarFallback>
           </Avatar>
         </MenubarTrigger>
         <MenubarContent>

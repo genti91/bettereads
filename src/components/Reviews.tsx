@@ -2,22 +2,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Progress } from "@/components/ui/progress"
 import { StarIcon, StarFilledIcon } from "@radix-ui/react-icons"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
 import { AddReveiew } from "./AddReview"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions"
-import EditReview from "./EditReview"
 import { Prisma } from "@prisma/client"
+import ReviewCard from "./ReviewCard"
 
 type Review = Prisma.ReviewGetPayload<{
     include: {
         user: true
+        Book?: true
     }
 }>
 
@@ -90,32 +84,5 @@ export default async function Reviews({ reviews, bookId }: { reviews: Review[], 
                 </div>
             </div>
         </div>
-    )
-}
-
-function ReviewCard({ review, owned }: { review: Review, owned?: boolean }) {
-    return (
-        <Card key={review.id}>
-            <CardHeader className="pb-3 gap-1">
-                <div className="flex justify-between">
-                    <CardTitle>{review.user.username}</CardTitle>
-                    <div className="flex gap-2 items-center">
-                        <p className="text-sm text-gray-400">{new Date(review.createdAt).toLocaleDateString("en-GB")}</p>
-                        {owned && (<EditReview review={review} />)}
-                    </div>
-                </div>
-                <CardDescription className="flex gap-1">
-                    {Array.from({ length: review.rating }).map((_, i) => (
-                        <StarFilledIcon key={i} />
-                    ))}
-                    {Array.from({ length: 5 - review.rating }).map((_, i) => (
-                        <StarIcon key={i} />
-                    ))}
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <p>{review.description}</p>
-            </CardContent>
-        </Card>
     )
 }

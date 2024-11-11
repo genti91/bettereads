@@ -16,3 +16,7 @@ export async function revalidateBook(bookId: string) {
 export async function revalidateShelves() {
     revalidatePath(`/bookshelves`);
 }
+
+export async function revalidateFollows() {
+    revalidatePath(`/following`);
+}

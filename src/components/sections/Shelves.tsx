@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Separator } from "../ui/separator";
 
 
-interface Shelve {
+interface Shelf {
   id: string;
   name: string;
   type: ShelfType;
@@ -22,41 +22,41 @@ async function getShelves(userId: string) {
   return response.json();
 }
 
-export default async function Shelves({ userId, showAll, separate }: { userId: string, showAll?: boolean, separate?: boolean }) {
-  let defaultShelves: Shelve[];
-  let customShelves: Shelve[];
+export default async function Shelves({ userId, showAll, separate, path }: { userId: string, showAll?: boolean, separate?: boolean, path?: string }) {
+  let defaultShelves: Shelf[];
+  let customShelves: Shelf[];
   try {
       let shelves = await getShelves(userId);
-      defaultShelves = shelves.filter((shelve: Shelve) => shelve.type === ShelfType.DEFAULT);
-      customShelves = shelves.filter((shelve: Shelve) => shelve.type === ShelfType.CUSTOM);
+      defaultShelves = shelves.filter((shelve: Shelf) => shelve.type === ShelfType.DEFAULT);
+      customShelves = shelves.filter((shelve: Shelf) => shelve.type === ShelfType.CUSTOM);
   } catch (error) {
       console.error(error);
       return <div>Failed to fetch shelves</div>;
   }
 
   let allBooks = new Set();
-  defaultShelves.forEach((shelve: Shelve) => {
+  defaultShelves.forEach((shelve: Shelf) => {
       shelve.books.forEach((book) => allBooks.add(book.id));
   });
-  customShelves.forEach((shelve: Shelve) => {
+  customShelves.forEach((shelve: Shelf) => {
       shelve.books.forEach((book) => allBooks.add(book.id));
   });
 
   return (
     <>
       {showAll && (
-        <Link href={`/bookshelves`} className="text-nowrap">
+        <Link href={{query: {shelf: ""}}} className="text-nowrap">
           All ({allBooks.size})
         </Link>
       )}
-      {defaultShelves.map((shelve: Shelve) => (
-        <Link key={shelve.id} href={`/bookshelves?shelf=${shelve.id}`} className="text-nowrap">
+      {defaultShelves.map((shelve: Shelf) => (
+        <Link key={shelve.id} href={{pathname: path, query: {shelf: shelve.id}}} className="text-nowrap">
           {shelve.name} ({shelve.bookCount})
         </Link>
       ))}
       {(separate && customShelves.length > 0) && <Separator />}
-      {customShelves.map((shelve: Shelve) => (
-        <Link key={shelve.id} href={`/bookshelves?shelf=${shelve.id}`} className="text-nowrap">
+      {customShelves.map((shelve: Shelf) => (
+        <Link key={shelve.id} href={{query: {pathname: path, shelf: shelve.id}}} className="text-nowrap">
           {shelve.name} ({shelve.bookCount})
         </Link>
       ))}

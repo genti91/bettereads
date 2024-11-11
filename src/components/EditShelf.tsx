@@ -12,12 +12,12 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { revalidateShelves } from "@/lib/actions";
-import { Shelve } from "@prisma/client";
+import { Shelf } from "@prisma/client";
 import { Input } from "./ui/input";
 import DeleteShelfButton from "./DeleteShelfButton";
 
 
-export default function EditShelf({shelf}: {shelf: Shelve}) {
+export default function EditShelf({shelf}: {shelf: Shelf}) {
     const [shelfName, setShelfName] = useState(shelf.name)
     const [open, setOpen] = useState(false)
     const { toast } = useToast()

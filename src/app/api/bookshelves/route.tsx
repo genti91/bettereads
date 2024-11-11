@@ -2,14 +2,14 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
     const body = await req.json();
-    const shelve = await prisma.shelve.create({
+    const shelf = await prisma.shelf.create({
         data: {
             name: body.name,
             type: body.type,
             userId: body.userId
         }
     });
-    return Response.json(shelve);
+    return Response.json(shelf);
 }
 
 export async function GET(req: Request) {
@@ -19,7 +19,7 @@ export async function GET(req: Request) {
     if (!userId) {
         return new Response("Missing userId", { status: 400 });
     }
-    const shelves = await prisma.shelve.findMany({
+    const shelves = await prisma.shelf.findMany({
         where: {
             userId: userId,
             books: bookId ? { some: { id: bookId } } : undefined,
@@ -41,7 +41,7 @@ export async function GET(req: Request) {
 
 export async function PUT(req: Request) {
     const body = await req.json();
-    const shelve = await prisma.shelve.update({
+    const shelf = await prisma.shelf.update({
         where: {
             id: body.id,
         },
@@ -49,15 +49,15 @@ export async function PUT(req: Request) {
             name: body.name,
         },
     });
-    return Response.json(shelve);
+    return Response.json(shelf);
 }
 
 export async function DELETE(req: Request) {
     const body = await req.json();
-    await prisma.shelve.delete({
+    await prisma.shelf.delete({
         where: {
             id: body.id,
         },
     });
-    return new Response("Shelve deleted", { status: 200 });
+    return new Response("shelf deleted", { status: 200 });
 }

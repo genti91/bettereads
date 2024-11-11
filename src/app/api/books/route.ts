@@ -37,7 +37,10 @@ export async function GET(req: Request) {
             genres: by_genres.length > 0,
             reviews: rating > 0
         }, 
-        where: filters 
+        where: filters ,
+        orderBy: {
+            createdAt: 'asc'
+        },
     });
 
     if (rating > 0) {
