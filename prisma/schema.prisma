@@ -46,7 +46,7 @@ model User {
   username  String    @unique
   password  String
   books     Book[]    @relation("BookUser")
-  Review    Review[]
+  reviews    Review[]
   shelves   Shelve[]
   followers Follows[] @relation("following")
   following Follows[] @relation("follower")

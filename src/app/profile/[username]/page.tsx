@@ -10,11 +10,16 @@ import FollowBackButton from "@/components/FollowBackButton";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import UnfollowButton from "@/components/UnfollowButton";
+import Link from "next/link";
+import ReviewCard from "@/components/ReviewCard";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 async function getUserData(username: string) {
   try {
     const res = await fetch(`${process.env.APP_URL}/api/users/${username}`)
-    return await res.json();
+    const user = await res.json();
+    console.log(user)
+    return user;
   } catch (error) {
     console.error(error)
     throw new Error("Error fetching user data")
@@ -33,9 +38,8 @@ async function isFollowed(userId: string, followerId: string) {
   }
 }
 
-
 export default async function Page({ params }: { params: { username: string } }) {
-    let user: User;
+    let user: any;
     try {
         user = await getUserData(params.username)
     } catch (error) {
@@ -63,7 +67,7 @@ export default async function Page({ params }: { params: { username: string } })
         <div className="flex flex-col gap-4 w-2/3">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">{user.name}</h1>
-            {session && 
+            {(session && session.user.id !== user.id) && 
               <>
                 {isUserFollowed ? 
                   <UnfollowButton userId={session.user.id} followingId={user.id}/>
@@ -74,15 +78,21 @@ export default async function Page({ params }: { params: { username: string } })
             }
           </div>
           <Separator />
-          <h2 className="text-xl font-bold underline">Bookshelves:</h2>
-          <div className="flex gap-6 flex-row flex-wrap">
-            <Shelves userId={user.id} />
-          </div>
+          <Link href={`/profile/${params.username}/bookshelves`} className="flex flex-col gap-4">
+            <h2 className="text-xl font-bold underline">Bookshelves:</h2>
+            <div className="flex gap-6 flex-row flex-wrap">
+                <Shelves userId={user.id} path={`/profile/${params.username}/bookshelves`}/>
+            </div>
+          </Link>
           <Separator />
           <h2 className="text-xl font-bold underline">Reviews:</h2>
-          <div className="flex gap-6 flex-row flex-wrap">
-            
-          </div>
+          <ScrollArea className="h-[500px] w-full px-4">
+            <div className="flex gap-6 flex-col">
+              {user.reviews.map((review: any) => (
+                <ReviewCard key={review.id} review={review}/>
+              ))}
+            </div>
+          </ScrollArea>
         </div>
       </div>
     </div>

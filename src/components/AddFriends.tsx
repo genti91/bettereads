@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation"
 import { revalidateFollows } from "@/lib/actions"
 import { Follows, User } from "@prisma/client"
 
-async function getFriends(username: string, setUsers: (users: any) => void, following: Follows[]) {
+async function getFriends(username: string, setUsers: (users: any) => void, following: Follows[], userId: string) {
     if (username === "") {
         setUsers([]);
         return;
@@ -20,7 +20,7 @@ async function getFriends(username: string, setUsers: (users: any) => void, foll
     try {
         const res = await fetch(`/api/users?username=${username}`);
         let users = await res.json();
-        users = users.filter((user: User) => !following.some((follow: Follows) => follow.followingId === user.id));
+        users = users.filter((user: User) => !following.some((follow: Follows) => follow.followingId === user.id) && user.id !== userId);
         setUsers(users);
     } catch (error) {
         console.error(error);
@@ -33,7 +33,7 @@ export default function AddFriends({following, userId}: {following: Follows[], u
     const [searchedUsers, setSearchedUsers] = useState<string>("");
     const router = useRouter();
     useEffect(() => {
-        getFriends(searchedUsers, setUsers, following);
+        getFriends(searchedUsers, setUsers, following, userId);
         console.log(users);
     }, [searchedUsers])
     async function handleFollow(id: string) {
