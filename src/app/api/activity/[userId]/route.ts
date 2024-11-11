@@ -1,17 +1,18 @@
 import { prisma } from "@/lib/prisma";
 
-export async function GET(req: Request, { userId }: { userId: string }) {
+export async function GET({ userId }: { userId: string }) {
     const activity = await prisma.activity.findMany({
         where: {
           user: {
-            following: {
+            followers: {
               some: { followerId: userId }
             }
-          }
+          },
+          userId: { not: userId }
         },
         orderBy: { createdAt: 'desc' },
         include: {
-          user: true,
+          user: { select: { id: true, name: true, username: true, picture: true } },
           book: { select: { id: true, title: true, author: true, imageUrl: true } },
           shelf: { select: { id: true, name: true, type: true } },
           review: { select: { id: true, rating: true, description: true } }

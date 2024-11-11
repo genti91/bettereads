@@ -48,7 +48,6 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
         />
         {session && 
           <>
-            <Separator orientation="vertical" />
             <Feed userId={session.user.id} />
           </>
         }
