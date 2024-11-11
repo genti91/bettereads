@@ -3,12 +3,11 @@ import { prisma } from "@/lib/prisma";
 export async function GET({ userId }: { userId: string }) {
     const activity = await prisma.activity.findMany({
         where: {
-          user: {
-            followers: {
-              some: { followerId: userId }
+            user: {
+                followers: {
+                    some: { followingId: userId }
+                }
             }
-          },
-          userId: { not: userId }
         },
         orderBy: { createdAt: 'desc' },
         include: {
