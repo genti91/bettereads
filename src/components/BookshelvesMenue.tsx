@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import AddShelf from "./AddShelf";
 import Shelves from "./sections/Shelves";
 
-export default function BookshelvesMenue({userId, hideButtons}: {userId: string, hideButtons: boolean}) {
+export default function BookshelvesMenue({userId, hideButtons}: {userId: string, hideButtons?: boolean}) {
   return (
     <div className="flex flex-col gap-3">
         <h1 className="text-xl font-bold">Bookshelves</h1>

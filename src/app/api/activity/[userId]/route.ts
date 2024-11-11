@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-export async function GET({ userId }: { userId: string }) {
+export async function GET(_:Request, { userId }: { userId: string }) {
     const activity = await prisma.activity.findMany({
         where: {
             user: {

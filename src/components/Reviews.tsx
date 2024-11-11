@@ -11,6 +11,7 @@ import ReviewCard from "./ReviewCard"
 type Review = Prisma.ReviewGetPayload<{
     include: {
         user: true
+        Book?: true
     }
 }>
 
