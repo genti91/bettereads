@@ -18,6 +18,7 @@ model Book {
   genres      Genre[]    @relation("BookGenres")
   reviews     Review[]
   shelves     Shelf[]   @relation("BookShelves")
+  rating      Float     @default(0)
   userId      String
   user        User       @relation(fields: [userId], references: [id], name: "BookUser")
   createdAt   DateTime   @default(now())

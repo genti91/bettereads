@@ -94,7 +94,7 @@ export function AddBookToShelf({ defaultShelves,  customShelves, bookId, shelves
             </div>
         </div>
         <div className="flex flex-col gap-3">
-        <h2 className="text-lg font-bold">Add to Custom Shelf</h2>
+        {customShelves.length > 0 && <h2 className="text-lg font-bold">Add to Custom Shelf</h2>}
             <div className="flex items-center gap-2 flex-wrap">
             {customShelves.map((shelf: Shelf) => {
                     let isSelected = selectedCustomShelf.includes(shelf);

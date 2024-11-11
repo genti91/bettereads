@@ -16,7 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 async function getUserData(username: string) {
   try {
-    const res = await fetch(`${process.env.APP_URL}/api/users/${username}`)
+    const res = await fetch(`${process.env.APP_URL}/api/users/${username}`, { cache: "no-store" });
     const user = await res.json();
     console.log(user)
     return user;

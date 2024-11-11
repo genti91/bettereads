@@ -19,5 +19,13 @@ export async function POST(req: Request) {
             bookId: body.bookId, 
         }
     });
+    const avgRating = await prisma.review.aggregate({
+        where: { bookId: body.bookId },
+        _avg: { rating: true },
+    });
+    await prisma.book.update({
+        where: { id: body.bookId },
+        data: { rating: avgRating._avg.rating ?? 0 },
+    });
     return Response.json(review);
 }

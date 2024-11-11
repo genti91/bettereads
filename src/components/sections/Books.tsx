@@ -8,6 +8,7 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination"
 import { Book } from "@prisma/client";
+import { StarIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 
 interface BooksProps {
@@ -80,7 +81,15 @@ export default async function Books({ pageNumber, maxPerPage, search, shelfId, s
                             <div className="flex flex-row">
                                 <img src={book.imageUrl} alt={book.title} className="w-24 h-32" />
                                 <div className="flex flex-col ml-4">
-                                    <h2 className="text-xl font-bold">{book.title}</h2>
+                                    <div className="flex flex-row gap-2 items-center">
+                                        <h2 className="text-xl font-bold">{book.title}</h2>
+                                        {book.rating > 0 &&
+                                            <div className="flex gap-1 items-center">
+                                                <StarIcon className="h-4 w-4"/>
+                                                <p>{book.rating % 1 === 0 ? book.rating.toFixed(0) : book.rating.toFixed(1)}</p>
+                                            </div>
+                                        }
+                                    </div>
                                     <p className="text-m">{book.author}</p>
                                     <p className="text-sm">{book.description}</p>
                                 </div>
