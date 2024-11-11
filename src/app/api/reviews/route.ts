@@ -3,14 +3,6 @@ import { ActivityType } from "@prisma/client";
 
 export async function POST(req: Request) {
     const body = await req.json();
-    await prisma.activity.create({
-        data: {
-            type: ActivityType.ADD_REVIEW,
-            userId: body.userId,
-            bookId: body.bookId,
-            reviewId: body.reviewId,
-        },
-    });
     const review = await prisma.review.create({ 
         data: {
             rating: body.rating,
@@ -18,6 +10,14 @@ export async function POST(req: Request) {
             userId: body.userId,
             bookId: body.bookId, 
         }
+    });
+    await prisma.activity.create({
+        data: {
+            type: ActivityType.ADD_REVIEW,
+            userId: body.userId,
+            bookId: body.bookId,
+            reviewId: review.id,
+        },
     });
     const avgRating = await prisma.review.aggregate({
         where: { bookId: body.bookId },

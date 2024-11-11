@@ -1,6 +1,9 @@
 import Books from "@/components/sections/Books";
+import Feed from "@/components/sections/Feed";
 import FilterMenu from "@/components/sections/FilterMenu"
 import { Separator } from "@/components/ui/separator";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 
 const fetchGenres = async () => {
   const response = await fetch(`${process.env.APP_URL}/api/genres`);
@@ -25,6 +28,7 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   if (Object.keys(filteredParams).length > 0) {
     currentPath += "&";
   }
+  const session = await getServerSession(authOptions);
   return (
     <div className="flex xl:px-80 px-10 py-10 justify-items-center sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
       <div className="flex gap-10">
@@ -42,6 +46,12 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
           rating={parseInt(searchParams["rating_filter"] as string ?? "0")}
           path={currentPath}
         />
+        {session && 
+          <>
+            <Separator orientation="vertical" />
+            <Feed userId={session.user.id} />
+          </>
+        }
       </div>
     </div>
   );
