@@ -14,11 +14,11 @@ async function getBook(id: string) {
 
 async function getShelves(userId: string, bookId?: string) {
   const response = await fetch(
-      `${process.env.APP_URL}/api/bookshelves?userId=${userId}` + (bookId ? `&bookId=${bookId}` : ""),
-      { cache: "no-store" }
+    `${process.env.APP_URL}/api/bookshelves?userId=${userId}` + (bookId ? `&bookId=${bookId}` : ""),
+    { cache: "no-store" }
   );
   if (!response.ok) {
-      throw new Error("Failed to fetch shelves");
+    throw new Error("Failed to fetch shelves");
   }
   return response.json();
 }
@@ -39,28 +39,28 @@ export default async function Book({ params }: { params: { id: string } }) {
   let shelvesWithBook: Shelf[] = [];
   if (session) {
     try {
-        let shelves = await getShelves(session.user.id);
-        shelvesWithBook = await getShelves(session.user.id, book.id);
-        defaultShelves = shelves.filter((shelve: Shelf) => shelve.type === ShelfType.DEFAULT);
-        customShelves = shelves.filter((shelve: Shelf) => shelve.type === ShelfType.CUSTOM);
+      let shelves = await getShelves(session.user.id);
+      shelvesWithBook = await getShelves(session.user.id, book.id);
+      defaultShelves = shelves.filter((shelve: Shelf) => shelve.type === ShelfType.DEFAULT);
+      customShelves = shelves.filter((shelve: Shelf) => shelve.type === ShelfType.CUSTOM);
     } catch (error) {
-        console.error(error);
+      console.error(error);
     }
   }
 
   return (
     <div className="container flex flex-col gap-9 px-20 py-14">
-      <div className="flex gap-9 flex-wrap">
+      <div className="flex gap-9 items-start"> {/* Updated this line */}
         <img src={book.imageUrl} alt={book.title} className="h-80" />
         <div className="flex flex-col gap-4">
           <h2 className="text-3xl font-bold">{book.title}</h2>
           <p className="text-2xl">{book.author}</p>
           <p className="text-lg">{book.description}</p>
           <p className="text-lg">{"Page Amount: " + book.pageAmount}</p>
-          <p className="text-lg">{"Editorial: "+book.editorial}</p>
+          <p className="text-lg">{"Editorial: " + book.editorial}</p>
           <div className="flex gap-2">
             <p className="text-lg">{"Genres: "}</p>
-            {book.genres.map((genre: string ) => (
+            {book.genres.map((genre: string) => (
               <span key={genre} className="text-sm bg-gray-200 px-2 py-1 rounded-full">
                 {genre}
               </span>
@@ -69,7 +69,7 @@ export default async function Book({ params }: { params: { id: string } }) {
           {session && <AddBookToShelf userId={session.user.id} defaultShelves={defaultShelves} customShelves={customShelves} bookId={book.id} shelvesWithBook={shelvesWithBook} />}
         </div>
       </div>
-      <Reviews reviews={book.reviews} bookId={params.id}/>
+      <Reviews reviews={book.reviews} bookId={params.id} />
     </div>
   );
 }
