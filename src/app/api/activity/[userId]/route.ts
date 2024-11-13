@@ -1,11 +1,11 @@
 import { prisma } from "@/lib/prisma";
 
-export async function GET(_:Request, { userId }: { userId: string }) {
+export async function GET(_:Request, { params }: { params: { userId: string } }) {
     const activity = await prisma.activity.findMany({
         where: {
             user: {
                 followers: {
-                    some: { followingId: userId }
+                    some: { followerId: params.userId }
                 }
             }
         },
@@ -17,6 +17,5 @@ export async function GET(_:Request, { userId }: { userId: string }) {
           review: { select: { id: true, rating: true, description: true } }
         }
       });
-
     return Response.json(activity);
 }
