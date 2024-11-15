@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma"
 // TODO: por si queremos hacerlo con clave encriptada.
 // import bcrypt from "bcryptjs"
 
-
 export const authOptions: AuthOptions = 
 {
   secret: process.env.NEXTAUTH_SECRET,
@@ -22,7 +21,7 @@ export const authOptions: AuthOptions =
           })
       
           if(user){
-            return { id: user.id, name: user.name, image: user.picture }
+            return { id: user.id, name: user.name, email: user.username, image: user.picture }
           }
           return null
 
@@ -40,11 +39,13 @@ export const authOptions: AuthOptions =
   callbacks: {
     async session({ session, token }) {
       session.user.id = token.sub ?? "";
+      session.user.email = token.email ?? ""
       return session
     },
     async jwt({ token, user }) {
       if (user) {
-        token.sub = user.id
+        token.sub = user.id || ""
+        token.email = user.email || ""
       }
       return token
     }

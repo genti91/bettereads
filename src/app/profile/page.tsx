@@ -10,6 +10,17 @@ import {
 import { Separator } from "@/components/ui/separator"
 import Shelves from "@/components/sections/Shelves";
 
+async function getUserData(username: string) {
+  try {
+    const res = await fetch(`${process.env.APP_URL}/api/users/${username}`, { cache: "no-store" });
+    const user = await res.json();
+    return user;
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error fetching user data")
+  }
+}
+
 
 export default async function Page() {
   const session = await getServerSession(authOptions)
@@ -25,6 +36,18 @@ export default async function Page() {
       </div>
     )
   }
+
+  let user: any;
+    try {
+        user = await getUserData(session.user.email ?? "")
+    } catch (error) {
+        console.error(error)
+        return (
+            <div className="flex justify-center items-center h-96">
+                <h1 className="text-3xl">User not found</h1>
+            </div>
+        )
+    }
 
   return (
     <div className="grid xl:px-80 lg:py-20 px-10 py-10 font-[family-name:var(--font-geist-sans)]">
