@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import Shelves from "@/components/sections/Shelves";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import ReviewCard from "@/components/ReviewCard";
 
 async function getUserData(username: string) {
   try {
@@ -67,13 +69,26 @@ export default async function Page() {
               <Button>Add Book</Button>
             </Link>
           </div>
+
           <Separator />
-            <Link href="/bookshelves">
-              <h2 className="text-xl font-bold underline">Bookshelves:</h2>
-            </Link>
-            <div className="flex gap-6 flex-row flex-wrap">
-              <Shelves userId={session.user.id} path="/bookshelves" />
+
+          <Link href="/bookshelves">
+            <h2 className="text-xl font-bold underline">Bookshelves:</h2>
+          </Link>
+          <div className="flex gap-6 flex-row flex-wrap">
+            <Shelves userId={session.user.id} path="/bookshelves" />
+          </div>
+
+          <Separator />
+          
+          <h2 className="text-xl font-bold underline">Reviews:</h2>
+          <ScrollArea className="h-[500px] w-full px-4">
+            <div className="flex gap-6 flex-col">
+              {user.reviews.map((review: any) => (
+                <ReviewCard key={review.id} review={review}/>
+              ))}
             </div>
+          </ScrollArea>
         </div>
       </div>
     </div>
