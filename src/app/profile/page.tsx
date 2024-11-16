@@ -31,9 +31,9 @@ export default async function Page() {
     // Si no hay sesión, redirige al usuario a la página de autenticación
     return (
       <div className="grid items-center justify-items-center sm:px-20 py-10 font-[family-name:var(--font-geist-sans)]">
-        <p>No tienes acceso a esta página. Por favor, inicia sesión.</p>
+        <p>You don't have access to this page. Please Log In.</p>
         <Link href="/auth/login">
-          <Button>Ir a la página de inicio de sesión</Button>
+          <Button>Log In</Button>
         </Link>
       </div>
     )
