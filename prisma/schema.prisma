@@ -17,8 +17,8 @@ model Book {
   editorial   String
   genres      Genre[]    @relation("BookGenres")
   reviews     Review[]
-  shelves     Shelf[]   @relation("BookShelves")
-  rating      Float     @default(0)
+  shelves     Shelf[]    @relation("BookShelves")
+  rating      Float      @default(0)
   userId      String
   user        User       @relation(fields: [userId], references: [id], name: "BookUser")
   createdAt   DateTime   @default(now())
@@ -39,18 +39,19 @@ model Review {
 }
 
 model User {
-  id        String     @id @default(cuid())
-  username  String     @unique
+  id        String      @id @default(cuid())
+  username  String      @unique
   password  String
-  books     Book[]     @relation("BookUser")
+  books     Book[]      @relation("BookUser")
   reviews   Review[]
   shelves   Shelf[]
-  followers Follows[]  @relation("following")
-  following Follows[]  @relation("follower")
+  followers Follows[]   @relation("following")
+  following Follows[]   @relation("follower")
+  challenges Challenge[]
   name      String
   picture   String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
   Activity  Activity[]
 }
 
@@ -93,8 +94,8 @@ model Activity {
   user      User         @relation(fields: [userId], references: [id])
   bookId    String?
   book      Book?        @relation(fields: [bookId], references: [id])
-  shelfId  String?
-  shelf    Shelf?      @relation(fields: [shelfId], references: [id])
+  shelfId   String?
+  shelf     Shelf?       @relation(fields: [shelfId], references: [id])
   reviewId  String?
   review    Review?      @relation(fields: [reviewId], references: [id])
   createdAt DateTime     @default(now())
@@ -103,4 +104,13 @@ model Activity {
 enum ActivityType {
   ADD_TO_SHELF
   ADD_REVIEW
+}
+
+model Challenge {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  amount    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
