@@ -12,11 +12,11 @@ import Shelves from "@/components/sections/Shelves";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ReviewCard from "@/components/ReviewCard";
 
-async function getUserData(username: string) {
+async function getUserData(userId: string) {
   try {
-    const res = await fetch(`${process.env.APP_URL}/api/users/${username}`, { cache: "no-store" });
+    const res = await fetch(`${process.env.APP_URL}/api/users?userId=${userId}`, { cache: "no-store" });
     const user = await res.json();
-    return user;
+    return user[0];
   } catch (error) {
     console.error(error)
     throw new Error("Error fetching user data")
@@ -41,7 +41,7 @@ export default async function Page() {
 
   let user: any;
     try {
-        user = await getUserData(session.user.email ?? "")
+        user = await getUserData(session.user.id);
     } catch (error) {
         console.error(error)
         return (
@@ -84,9 +84,10 @@ export default async function Page() {
           <h2 className="text-xl font-bold underline">Reviews:</h2>
           <ScrollArea className="h-[500px] w-full px-4">
             <div className="flex gap-6 flex-col">
-              {user.reviews.map((review: any) => (
+              {user.reviews?.map((review: any) => (
                 <ReviewCard key={review.id} review={review}/>
               ))}
+              {user.reviews?.length === 0 && <p>No reviews yet</p>}
             </div>
           </ScrollArea>
         </div>

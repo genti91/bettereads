@@ -22,17 +22,32 @@ interface Filters {
         contains: string;
         mode: "insensitive";
     };
+    id?: {
+        equals: string;
+    };
 }
 
 export async function GET(req: Request) {
     const url = new URL(req.url);
     const username = url.searchParams.get("username");
+    const userId = url.searchParams.get("userId");
     const filters: Filters = {};
     if (username) {
         filters.username = { contains: username, mode: "insensitive" };
     }
+    if (userId) {
+        filters.id = { equals: userId };
+    }
     const users = await prisma.user.findMany({ 
-        where: filters 
+        where: filters,
+        include: userId ? { 
+            reviews: {
+                include: { 
+                    Book: true,
+                    user: true
+                }
+            } 
+        } : null
     });
     return Response.json(users);
 }
