@@ -18,7 +18,7 @@ export default function ChallengeButton({ userId }: { userId: string }) {
             <p className="text-sm">I want to read</p>
             <Input type="number" className="w-20" placeholder="0" onChange={(e) => setGoal(parseInt(e.target.value))} />
             <p className="text-sm">books in 2024</p>
-            <Button className="h-7" disabled={!goal} onClick={createChallenge}>Set Goal</Button>
+            <Button className="h-7" disabled={goal < 1} onClick={createChallenge}>Set Goal</Button>
         </div>
     )
 }
