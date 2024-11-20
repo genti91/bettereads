@@ -1,5 +1,6 @@
 import ChallengeButton from "./ChallengeButton";
 import { Label } from "./ui/label";
+import { Progress } from "./ui/progress";
 
 async function getChallenge(userId: string) {
     const res = await fetch(`${process.env.APP_URL}/api/challenge/${userId}`);
@@ -53,8 +54,7 @@ export default async function Challenge({ userId }: { userId: string }) {
                             {(challenge.amount > challenge.amountCompleted) && <p className="text-xs text-nowrap text-slate-500">{challenge.amount - challenge.amountCompleted}  book{(challenge.amount - challenge.amountCompleted) == 1 ? '' : 's'} behind schedule</p>}
                             <div className="flex items-center gap-2">
                                 <div className="flex w-full">
-                                    <div className={"bg-[#baad99] h-3 rounded-s-sm " + `w-[${completedPercent}%] ` + (completedPercent == 100 ? ' rounded-e-sm' : "") }/>
-                                    <div className={"bg-[#d2cabecc] h-3 rounded-e-sm " + `w-[${remainingPercent}%] `  + (completedPercent == 0 ? ' rounded-s-sm' : "") }/>
+                                <Progress className="h-3" value={completedPercent} indicatorColor="bg-[#BAAD99]"/>
                                 </div>
                                 <p className="text-sm text-slate-700">{challenge.amountCompleted}/{challenge.amount}</p>
                             </div>
