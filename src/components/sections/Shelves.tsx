@@ -56,7 +56,7 @@ export default async function Shelves({ userId, showAll, separate, path }: { use
       ))}
       {(separate && customShelves.length > 0) && <Separator />}
       {customShelves.map((shelve: Shelf) => (
-        <Link key={shelve.id} href={{query: {pathname: path, shelf: shelve.id}}} className="text-nowrap">
+        <Link key={shelve.id} href={{pathname: path, query: {shelf: shelve.id}}} className="text-nowrap">
           {shelve.name} ({shelve.bookCount})
         </Link>
       ))}

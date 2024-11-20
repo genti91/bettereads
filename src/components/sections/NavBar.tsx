@@ -32,8 +32,8 @@ export default async function NavBar() {
                 <Tooltip>
                   <TooltipTrigger>
                     <Link href="/friends">
-                      <Avatar className="bg-slate-100 items-center justify-center cursor-pointer">
-                        <AvatarImage src={"https://cdn-icons-png.flaticon.com/512/4951/4951182.png"}/>
+                      <Avatar className="bg-[#f4f4f4c9] items-center justify-center cursor-pointer">
+                        <AvatarImage src="/images/friends.png" className="w-7 h-[26px]"/>
                         <AvatarFallback>P</AvatarFallback>
                       </Avatar>
                     </Link>

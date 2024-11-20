@@ -4,6 +4,7 @@ import FilterMenu from "@/components/sections/FilterMenu"
 import { Separator } from "@/components/ui/separator";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/authOptions";
+import Challenge from "@/components/Challenge";
 
 const fetchGenres = async () => {
   const response = await fetch(`${process.env.APP_URL}/api/genres`);
@@ -32,11 +33,20 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   return (
     <div className="flex xl:px-80 px-10 py-10 justify-items-center sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
       <div className="flex gap-10">
-        <FilterMenu 
-          genres={genres}
-          oldSelectedGenres={searchParams["genres_filter"] as string ?? ""} 
-          oldRating={parseInt(searchParams["rating_filter"] as string ?? "0")}
-        />
+        <div className="flex flex-col gap-7">
+          <FilterMenu 
+            genres={genres}
+            oldSelectedGenres={searchParams["genres_filter"] as string ?? ""} 
+            oldRating={parseInt(searchParams["rating_filter"] as string ?? "0")}
+          />
+          {session &&
+            <>
+              <Separator orientation="horizontal" />
+              <Challenge userId={session.user.id} />
+            </>
+          }
+          
+        </div>
         <Separator orientation="vertical" />
         <Books
           pageNumber={searchParams["page"] ?? '1'}
@@ -45,6 +55,7 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
           genres={searchParams["genres_filter"] ?? ""}
           rating={parseInt(searchParams["rating_filter"] as string ?? "0")}
           path={currentPath}
+          recommended={session?.user.id}
         />
         {session && 
           <>
