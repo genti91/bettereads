@@ -45,6 +45,7 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
           genres={searchParams["genres_filter"] ?? ""}
           rating={parseInt(searchParams["rating_filter"] as string ?? "0")}
           path={currentPath}
+          recommended={session?.user.id}
         />
         {session && 
           <>

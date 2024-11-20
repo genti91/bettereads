@@ -20,6 +20,7 @@ interface BooksProps {
     path?: string,
     genres: string | string[],
     rating: number,
+    recommended?: string
 }
 
 const MAX_PAGINATION = 5;
@@ -41,8 +42,18 @@ async function getBooks(search: string, genres: string, rating: number, shelfId?
     return response.json();
 }
 
-export default async function Books({ pageNumber, maxPerPage, search, shelfId, shlvesUserId, path = "", genres, rating }: BooksProps) {
-    const books = await getBooks(search as string, genres as string, rating, shelfId as string, shlvesUserId);
+async function getRecomendedBooks(userId: string) {
+    const response = await fetch(`${process.env.APP_URL}/api/recommendedBooks/${userId}`, { cache: "no-store" });
+    return response.json();
+}
+
+export default async function Books({ pageNumber, maxPerPage, search, shelfId, shlvesUserId, path = "", genres, rating, recommended }: BooksProps) {
+    let books = [];
+    if ( recommended && !search && !genres && !rating && !shelfId && !shlvesUserId) {
+        books = await getRecomendedBooks(recommended);
+    } else {
+        books = await getBooks(search as string, genres as string, rating, shelfId as string, shlvesUserId);
+    }
     const currentPage = Number(pageNumber);
     const start = (currentPage - 1) * maxPerPage;
     const end = start + maxPerPage;
