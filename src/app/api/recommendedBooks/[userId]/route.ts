@@ -36,6 +36,9 @@ export async function GET(_: Request, { params }: { params: { userId: string } }
         include: {
           genres: true,
         },
+        orderBy: {
+          rating: "desc",
+        },
       });
   
       const otherBooks = await prisma.book.findMany({

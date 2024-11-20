@@ -14,7 +14,7 @@ export async function GET(_: Request, { params }: { params: { userId: string } }
             },
         });
         const amountCompleted = readShelf?.books.length || 0;
-        const challenge = await prisma.challenge.findFirst({
+        let challenge = await prisma.challenge.findFirst({
             where: {
                 userId: userId,
                 createdAt: {
@@ -23,7 +23,8 @@ export async function GET(_: Request, { params }: { params: { userId: string } }
                 },
             },
         });
-        return new Response(JSON.stringify({...challenge, amountCompleted}), { status: 200 });
+        let res = challenge ? {...challenge, amountCompleted} : {};
+        return new Response(JSON.stringify(res), { status: 200 });
     } catch (error) {
       console.error("Error fetching challenge:", error);
       return new Response("Failed to fetch challenge", { status: 500 });

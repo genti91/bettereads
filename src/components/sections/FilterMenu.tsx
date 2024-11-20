@@ -45,7 +45,7 @@ export default function FilterMenu({ genres, oldSelectedGenres, oldRating }: { g
     }, [selectedGenres]);
 
     return (
-        <div className="flex flex-col gap-7">
+        <>
             <Command className="h-56 gap-1">
                 <Label className="text-slate-700">Filter by Genre:</Label>
                 <CommandInput placeholder="Search genre..." />
@@ -78,6 +78,6 @@ export default function FilterMenu({ genres, oldSelectedGenres, oldRating }: { g
             </Command>
             <Separator />
             <RatingFilter oldValue={oldRating}/>
-        </div>
+        </>
     )
 }
