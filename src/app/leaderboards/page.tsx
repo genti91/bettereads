@@ -11,79 +11,81 @@ import {
 
 
 export default function LeaderboardsPage() {
-    const invoices = [
+    const top_reviewers = [
         {
-          invoice: "INV001",
+          username: "1",
           paymentStatus: "Paid",
-          totalAmount: "$250.00",
+          amount_reviews: "$250.00",
           paymentMethod: "Credit Card",
         },
         {
-          invoice: "INV002",
+          username: "INV002",
           paymentStatus: "Pending",
-          totalAmount: "$150.00",
+          amount_reviews: "$150.00",
           paymentMethod: "PayPal",
         },
         {
-          invoice: "INV003",
+          username: "INV003",
           paymentStatus: "Unpaid",
-          totalAmount: "$350.00",
+          amount_reviews: "$350.00",
           paymentMethod: "Bank Transfer",
         },
         {
-          invoice: "INV004",
+          username: "INV004",
           paymentStatus: "Paid",
-          totalAmount: "$450.00",
+          amount_reviews: "$450.00",
           paymentMethod: "Credit Card",
         },
         {
-          invoice: "INV005",
+          username: "INV005",
           paymentStatus: "Paid",
-          totalAmount: "$550.00",
+          amount_reviews: "$550.00",
           paymentMethod: "PayPal",
         },
         {
-          invoice: "INV006",
+          username: "INV006",
           paymentStatus: "Pending",
-          totalAmount: "$200.00",
+          amount_reviews: "$200.00",
           paymentMethod: "Bank Transfer",
         },
         {
-          invoice: "INV007",
+          username: "INV007",
           paymentStatus: "Unpaid",
-          totalAmount: "$300.00",
+          amount_reviews: "$300.00",
           paymentMethod: "Credit Card",
         },
-      ]
-
+      ] 
     
     return (
-        <Table>
-        <TableCaption>Top Reviewers</TableCaption>
-        <TableHeader>
-            <TableRow>
-            <TableHead className="w-[100px]">Invoice</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Method</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-            {invoices.map((invoice) => (
-            <TableRow key={invoice.invoice}>
-                <TableCell className="font-medium">{invoice.invoice}</TableCell>
-                <TableCell>{invoice.paymentStatus}</TableCell>
-                <TableCell>{invoice.paymentMethod}</TableCell>
-                <TableCell className="text-right">{invoice.totalAmount}</TableCell>
-            </TableRow>
-            ))}
-        </TableBody>
-        <TableFooter>
-            <TableRow>
-            <TableCell colSpan={3}>Total</TableCell>
-            <TableCell className="text-right">$2,500.00</TableCell>
-            </TableRow>
-        </TableFooter>
-        </Table>
+        <div className="flex justify-center flex-col lg:flex-row items-center gap-20">
+            <div className="flex-1 max-w-md">
+                <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableCell colSpan={3} className="text-xl font-semi-bold text-center">
+                            Top Reviewers
+                        </TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableHead>Ranking</TableHead>
+                        <TableHead>Username</TableHead>
+                        <TableHead>Amount of reviews</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {
+                    top_reviewers.map((reviewer, index) => (
+                        <TableRow key={reviewer.username}>
+                            <TableCell className="font-medium">{index + 1}.</TableCell>
+                            <TableCell>{reviewer.username}</TableCell>
+                            <TableCell>{reviewer.amount_reviews}</TableCell>
+                        </TableRow>
+                        ))
+                    }
+                </TableBody>
+                </Table>
+            </div>
+        </div>
+        
     )
 }
