@@ -1,6 +1,7 @@
 import Link from "next/link";
 import SearchBar from "../SearchBar";
 import ProfileIconMenue from "../ProfileIconMenue";
+import LeaderBoards from "../sections/LeaderBoards";
 import { Button } from "@/components/ui/button"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions"
@@ -25,6 +26,7 @@ export default async function NavBar() {
           </div>
         </Link>
         <div className="flex items-center gap-6">
+          <LeaderBoards/>
           <SearchBar />
           {session ?
             <div className="flex gap-4">
