@@ -39,20 +39,24 @@ model Review {
 }
 
 model User {
-  id        String      @id @default(cuid())
-  username  String      @unique
-  password  String
-  books     Book[]      @relation("BookUser")
-  reviews   Review[]
-  shelves   Shelf[]
-  followers Follows[]   @relation("following")
-  following Follows[]   @relation("follower")
+  id         String       @id @default(cuid())
+  username   String       @unique
+  password   String
+  books      Book[]       @relation("BookUser")
+  reviews    Review[]
+  shelves    Shelf[]
+  followers  Follows[]    @relation("following")
+  following  Follows[]    @relation("follower")
   challenges Challenge[]
-  name      String
-  picture   String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  Activity  Activity[]
+  name       String
+  picture    String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Activity   Activity[]
+  groups     Group[]      @relation("GroupUsers")
+  groupId    String?
+  Discussion Discussion[]
+  Comment    Comment[]
 }
 
 model Follows {
@@ -113,4 +117,38 @@ model Challenge {
   amount    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Group {
+  id          String       @id @default(cuid())
+  name        String
+  createdBy   String
+  users       User[]       @relation("GroupUsers")
+  discussions Discussion[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Discussion {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  comments    Comment[]
+  groupId     String
+  group       Group     @relation(fields: [groupId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Comment {
+  id           String     @id @default(cuid())
+  description  String
+  user         User       @relation(fields: [userId], references: [id])
+  userId       String
+  discussionId String
+  discussion   Discussion @relation(fields: [discussionId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
