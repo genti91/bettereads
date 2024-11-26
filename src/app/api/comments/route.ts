@@ -4,9 +4,9 @@ export async function POST(req: Request) {
     try {
         const body = await req.json();
 
-        const { content, discussionId, userId } = body;
-        if (!content || !discussionId || !userId) {
-            return new Response("Invalid input. 'content', 'discussionId', and 'userId' are required.", { status: 400 });
+        const { description, discussionId, userId } = body;
+        if (!description || !discussionId || !userId) {
+            return new Response("Invalid input. 'description', 'discussionId', and 'userId' are required.", { status: 400 });
         }
 
         const comment = await prisma.comment.create({

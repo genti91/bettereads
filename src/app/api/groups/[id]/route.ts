@@ -8,7 +8,19 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
             },
             include: {
                 users: true,
-                discussions: true
+                discussions: {
+                    include: {
+                        user: {
+                            select: {
+                                username: true,
+                                picture: true
+                            }
+                        }
+                    },
+                    orderBy: {
+                        updatedAt: "desc"
+                    }
+                }
             }
         });
         return Response.json(group);

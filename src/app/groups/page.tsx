@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import { Group } from "@prisma/client";
+import Discussion from "@/components/sections/Discussion";
 
 async function getGroups(userId: string) {
     const response = await fetch(`${process.env.APP_URL}/api/groups?userId=${userId}`);
@@ -22,6 +23,14 @@ async function getGroup(groupId: string) {
         return response.json();
     }
     throw new Error("An error occurred while fetching the group");
+}
+
+async function getDiscussions(discussionId: string) {
+    const response = await fetch(`${process.env.APP_URL}/api/discussions/${discussionId}`);
+    if (response.ok) {
+        return response.json();
+    }
+    throw new Error("An error occurred while fetching the discussions");
 }
 
 export default async function GroupsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
@@ -44,6 +53,15 @@ export default async function GroupsPage({ searchParams }: { searchParams: { [ke
             return <div className="flex justify-center items-center h-[50vh]">An error occurred while fetching the group</div>
         }
     }
+    let discussion;
+    if (searchParams["discussion"] != "") {
+        try {
+            discussion = await getDiscussions(searchParams["discussion"] as string);
+        } catch (error) {
+            return <div className="flex justify-center items-center h-[50vh]">An error occurred while fetching the discussion</div>
+        }
+    }
+
     return (
         <div className="flex xl:px-80 px-10 py-10 justify-items-center sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
             <div className="flex gap-10">
@@ -60,16 +78,22 @@ export default async function GroupsPage({ searchParams }: { searchParams: { [ke
                     </div>
                 </div>
                 <Separator orientation="vertical" />
-                {groups.length > 0 ? 
+                {!discussion ?
                     <>
-                        <Discussions group={selectedGroup ?? groups[0]} userId={session.user.id} />
-                        <Separator orientation="vertical" />
-                        <GroupSettings group={group} userId={session.user.id}/>
+                        {groups.length > 0 ? 
+                            <>
+                                <Discussions group={group} userId={session.user.id} />
+                                <Separator orientation="vertical" />
+                                <GroupSettings group={group} userId={session.user.id}/>
+                            </>
+                            :
+                            <div className="flex flex-col gap-2 justify-center">
+                                <h1 className="text-xl">No groups found</h1>
+                            </div>
+                        }
                     </>
                     :
-                    <div className="flex flex-col gap-2 justify-center">
-                        <h1 className="text-xl">No groups found</h1>
-                    </div>
+                    <Discussion discussion={discussion} group={group} userId={session.user.id}/>
                 }
             </div>
         </div> 

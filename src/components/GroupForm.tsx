@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 
 
 
-export function GroupForm({ form, onSubmit, buttonText }: { form: any, onSubmit: any, buttonText: string }) {
+export function GroupForm({ form, onSubmit, buttonText, discussion }: { form: any, onSubmit: any, buttonText: string, discussion?: boolean }) {
     return (
         <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-8">
@@ -16,9 +16,9 @@ export function GroupForm({ form, onSubmit, buttonText }: { form: any, onSubmit:
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel>{discussion ? "Title" : "Name"}</FormLabel>
                             <FormControl>
-                                <Input placeholder="Group name" {...field} />
+                                <Input placeholder={discussion ? "Discussion title" : "Group Name"} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
