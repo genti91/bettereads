@@ -1,3 +1,4 @@
+import { Separator } from "@/components/ui/separator";
 import {
     Table,
     TableBody,
@@ -6,6 +7,7 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table"
+import { Book } from "@prisma/client";
 
 type TopUser = {
   username: string;
@@ -28,19 +30,40 @@ async function getTopUsersByAmountReviews(){
   }
 }
 
+async function getTopBooks(){
+  try {
+    const response = await fetch(
+      `${process.env.APP_URL}/api/leaderboards/topBooks`,
+      { cache: "no-store" }
+    );
+    
+    return await response.json();
+
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error fetching book data")
+  }
+}
+
 export default async function LeaderboardsPage() {
     let top_reviewers: TopUser[] = [];
+    let top_books: Book[] = [];
     try {
       top_reviewers = await getTopUsersByAmountReviews();
     } catch (error) {
       console.error("Failed to fetch top reviewers:", error);
       top_reviewers = [];
     }
+    try {
+      top_books = await getTopBooks();
+    } catch (error) {
+      console.error("Failed to fetch top books:", error);
+      top_books = [];
+    }
     
     return (
-        <div className="flex justify-center flex-col lg:flex-row items-center gap-20">
-            <div className="flex-1 max-w-md">
-                <Table>
+        <div className="flex justify-center flex-col lg:flex-row items-center gap-20 pt-14 container">
+            <Table className="text-center">
                 <TableHeader>
                     <TableRow>
                         <TableCell colSpan={3} className="text-xl font-semi-bold text-center">
@@ -48,9 +71,9 @@ export default async function LeaderboardsPage() {
                         </TableCell>
                     </TableRow>
                     <TableRow>
-                        <TableHead>Ranking</TableHead>
-                        <TableHead>Username</TableHead>
-                        <TableHead>Amount of reviews</TableHead>
+                        <TableHead className="text-center">Ranking</TableHead>
+                        <TableHead className="text-center">Username</TableHead>
+                        <TableHead className="text-center">Amount of reviews</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -59,13 +82,39 @@ export default async function LeaderboardsPage() {
                         <TableRow key={reviewer.username}>
                             <TableCell className="font-medium">{index + 1}.</TableCell>
                             <TableCell>{reviewer.username}</TableCell>
-                            <TableCell>{reviewer.amountReview}</TableCell>
+                            <TableCell >{reviewer.amountReview}</TableCell>
                         </TableRow>
                         ))
                     }
                 </TableBody>
-                </Table>
-            </div>
+            </Table>
+            <Table className="text-center">
+                <TableHeader>
+                    <TableRow>
+                        <TableCell colSpan={3} className="text-xl font-semi-bold text-center">
+                            Top Books
+                        </TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableHead className="text-center">Ranking</TableHead>
+                        <TableHead className="text-center">Title</TableHead>
+                        <TableHead className="text-center">Author</TableHead>
+                        <TableHead className="text-center">Rating</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {
+                    top_books.map((book, index) => (
+                        <TableRow key={book.id}>
+                            <TableCell className="font-medium">{index + 1}.</TableCell>
+                            <TableCell>{book.title}</TableCell>
+                            <TableCell>{book.author}</TableCell>
+                            <TableCell>{book.rating % 1 === 0 ? book.rating.toFixed(0) : book.rating.toFixed(1)}</TableCell>
+                        </TableRow>
+                        ))
+                    }
+                </TableBody>
+            </Table>
         </div>
         
     )
