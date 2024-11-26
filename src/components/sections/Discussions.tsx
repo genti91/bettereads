@@ -12,8 +12,8 @@ import LeavGroup from "../LeavGroup";
 
 export default async function Discussions({ group, userId }: { group: Group, userId: string }) {
     return (
-        <div className="flex flex-col gap-3 w-[50%]">
-            <div className="flex justify-between items-center min-w-full">
+        <div className="flex flex-col gap-3 min-w-[60vh] w-[50%]">
+            <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold">{group.name}</h1>
                 {group.createdBy === userId ? 
                     <div className="flex gap-2">
@@ -30,7 +30,7 @@ export default async function Discussions({ group, userId }: { group: Group, use
                 <Label className="text-2xl">Discussions:</Label>
                 <Button className="h-7">Create Discussion</Button>
             </div>
-            <ScrollArea className="h-[60vh] min-w-[60vh]">
+            <ScrollArea className="h-[60vh]">
                 <div className="px-5">
                     {Array.from({length: 20}).map((_, i) => (
                         <>
