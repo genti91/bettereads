@@ -1,4 +1,3 @@
-import { Separator } from "@/components/ui/separator";
 import {
     Table,
     TableBody,
@@ -8,6 +7,7 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { Book } from "@prisma/client";
+import Link from "next/link";
 
 type TopUser = {
   username: string;
@@ -79,12 +79,13 @@ export default async function LeaderboardsPage() {
                 <TableBody>
                     {
                     top_reviewers.map((reviewer, index) => (
-                        <TableRow key={reviewer.username}>
-                            <TableCell className="font-medium">{index + 1}.</TableCell>
-                            <TableCell>{reviewer.username}</TableCell>
-                            <TableCell >{reviewer.amountReview}</TableCell>
-                        </TableRow>
-                        ))
+                      <TableRow key={reviewer.username}>
+                            
+                              <TableCell className="font-medium">{index + 1}.</TableCell>
+                              <TableCell><Link href={`/profile/${reviewer.username}`}>{reviewer.username}</Link></TableCell>
+                              <TableCell >{reviewer.amountReview}</TableCell>
+                          </TableRow>
+                      ))
                     }
                 </TableBody>
             </Table>
@@ -107,7 +108,7 @@ export default async function LeaderboardsPage() {
                     top_books.map((book, index) => (
                         <TableRow key={book.id}>
                             <TableCell className="font-medium">{index + 1}.</TableCell>
-                            <TableCell>{book.title}</TableCell>
+                            <TableCell><Link href={`/book/${book.id}`}>{book.title}</Link></TableCell>
                             <TableCell>{book.author}</TableCell>
                             <TableCell>{book.rating % 1 === 0 ? book.rating.toFixed(0) : book.rating.toFixed(1)}</TableCell>
                         </TableRow>
