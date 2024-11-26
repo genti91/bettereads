@@ -1,60 +1,41 @@
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
   } from "@/components/ui/table"
 
+type TopUser = {
+  username: string;
+  amountReview: number;
+};
 
-export default function LeaderboardsPage() {
-    const top_reviewers = [
-        {
-          username: "1",
-          paymentStatus: "Paid",
-          amount_reviews: "$250.00",
-          paymentMethod: "Credit Card",
-        },
-        {
-          username: "INV002",
-          paymentStatus: "Pending",
-          amount_reviews: "$150.00",
-          paymentMethod: "PayPal",
-        },
-        {
-          username: "INV003",
-          paymentStatus: "Unpaid",
-          amount_reviews: "$350.00",
-          paymentMethod: "Bank Transfer",
-        },
-        {
-          username: "INV004",
-          paymentStatus: "Paid",
-          amount_reviews: "$450.00",
-          paymentMethod: "Credit Card",
-        },
-        {
-          username: "INV005",
-          paymentStatus: "Paid",
-          amount_reviews: "$550.00",
-          paymentMethod: "PayPal",
-        },
-        {
-          username: "INV006",
-          paymentStatus: "Pending",
-          amount_reviews: "$200.00",
-          paymentMethod: "Bank Transfer",
-        },
-        {
-          username: "INV007",
-          paymentStatus: "Unpaid",
-          amount_reviews: "$300.00",
-          paymentMethod: "Credit Card",
-        },
-      ] 
+async function getTopUsersByAmountReviews(){
+  try {
+    const response = await fetch(
+      `${process.env.APP_URL}/api/leaderboards/topUsersByAmountReviews`,
+      { cache: "no-store" }
+    );
+    
+    const top_reviewers = await response.json();
+    
+    return top_reviewers;
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error fetching user data")
+  }
+}
+
+export default async function LeaderboardsPage() {
+    let top_reviewers: TopUser[] = [];
+    try {
+      top_reviewers = await getTopUsersByAmountReviews();
+    } catch (error) {
+      console.error("Failed to fetch top reviewers:", error);
+      top_reviewers = [];
+    }
     
     return (
         <div className="flex justify-center flex-col lg:flex-row items-center gap-20">
@@ -78,7 +59,7 @@ export default function LeaderboardsPage() {
                         <TableRow key={reviewer.username}>
                             <TableCell className="font-medium">{index + 1}.</TableCell>
                             <TableCell>{reviewer.username}</TableCell>
-                            <TableCell>{reviewer.amount_reviews}</TableCell>
+                            <TableCell>{reviewer.amountReview}</TableCell>
                         </TableRow>
                         ))
                     }

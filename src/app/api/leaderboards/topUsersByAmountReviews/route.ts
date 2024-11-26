@@ -27,7 +27,7 @@ export const getTopUsersByAmountReviews = async () => {
   
         return {
           ...user,
-          reviewCount: group._count.id,
+          amountReview: group._count.id,
         };
       })
     );
