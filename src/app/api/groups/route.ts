@@ -17,6 +17,9 @@ export async function GET(req: Request) {
                     },
                 },
             },
+            orderBy: {
+                updatedAt: "desc",
+            }
         });
         return new Response(JSON.stringify(groups), { status: 200 });
     } catch (error) {
@@ -28,15 +31,15 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-
-        const { name, createdBy } = body;
-        if (!name || !createdBy) {
+        const { name, createdBy, description } = body;
+        if (!name || !createdBy || !description) {
             return new Response("Invalid input. 'name' and 'createdBy' are required.", { status: 400 });
         }
 
         const group = await prisma.group.create({
             data: {
                 name,
+                description,
                 createdBy,
                 users: {
                     connect: { id: createdBy },

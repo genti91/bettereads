@@ -9,10 +9,10 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Button } from "./ui/button"
 import { useRouter } from "next/navigation"
-import { revalidateFollows } from "@/lib/actions"
+import { revalidateFollows, revalidateGroups } from "@/lib/actions"
 import { Follows, User } from "@prisma/client"
 
-async function getFriends(username: string, setUsers: (users: any) => void, following: Follows[], userId: string) {
+async function getFriends(username: string, setUsers: (users: any) => void, following: Follows[], userId: string, usersInGroup?: User[]) {
     if (username === "") {
         setUsers([]);
         return;
@@ -20,6 +20,9 @@ async function getFriends(username: string, setUsers: (users: any) => void, foll
     try {
         const res = await fetch(`/api/users?username=${username}`);
         let users = await res.json();
+        if (usersInGroup) {
+            users = users.filter((user: User) => !usersInGroup.some((userInGroup: User) => userInGroup.id === user.id));
+        }
         users = users.filter((user: User) => !following.some((follow: Follows) => follow.followingId === user.id) && user.id !== userId);
         setUsers(users);
     } catch (error) {
@@ -28,12 +31,12 @@ async function getFriends(username: string, setUsers: (users: any) => void, foll
     }
 }
 
-export default function AddFriends({following, userId}: {following: Follows[], userId: string}) {
+export default function AddFriends({following, userId, addToGroupId, usersInGroup}: {following: Follows[], userId: string, addToGroupId?: string, usersInGroup?: User[]}) {
     const [users, setUsers] = useState<User[]>([]);
     const [searchedUsers, setSearchedUsers] = useState<string>("");
     const router = useRouter();
     useEffect(() => {
-        getFriends(searchedUsers, setUsers, following, userId);
+        getFriends(searchedUsers, setUsers, following, userId, usersInGroup);
         console.log(users);
     }, [searchedUsers])
     async function handleFollow(id: string) {
@@ -50,6 +53,25 @@ export default function AddFriends({following, userId}: {following: Follows[], u
             });
             if (res.ok) {
                 revalidateFollows();
+                setUsers(users.filter((user:User) => user.id !== id));
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    async function handleGroups(id: string) {
+        try {
+            const res = await fetch(`/api/groups/${addToGroupId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    userToAdd: id,
+                }),
+            });
+            if (res.ok) {
+                revalidateGroups();
                 setUsers(users.filter((user:User) => user.id !== id));
             }
         } catch (error) {
@@ -78,7 +100,7 @@ export default function AddFriends({following, userId}: {following: Follows[], u
                                     </Avatar>
                                     <p>{user.username}</p>
                                 </div>
-                                <Button className="h-7" onClick={() => handleFollow(user.id)}>Follow</Button>
+                                <Button className="h-7" onClick={() => !addToGroupId ? handleFollow(user.id) : handleGroups(user.id)}>{addToGroupId ? "Add" : "Follow"}</Button>
                             </div>
                         </div>
                     ))}

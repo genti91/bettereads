@@ -20,3 +20,7 @@ export async function revalidateShelves() {
 export async function revalidateFollows() {
     revalidatePath(`/following`);
 }
+
+export async function revalidateGroups() {
+    revalidatePath(`/groups`);
+}
