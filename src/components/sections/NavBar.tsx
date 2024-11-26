@@ -1,6 +1,7 @@
 import Link from "next/link";
 import SearchBar from "../SearchBar";
 import ProfileIconMenue from "../ProfileIconMenue";
+import LeaderBoards from "../sections/LeaderBoards";
 import { Button } from "@/components/ui/button"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions"
@@ -11,6 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Separator } from "../ui/separator";
 
 
 export default async function NavBar() {
@@ -25,6 +27,21 @@ export default async function NavBar() {
           </div>
         </Link>
         <div className="flex items-center gap-6">
+          <div className="flex flex-row">
+            <div className="flex gap-1">
+              {session &&
+                <>
+                  <Link href="/groups">
+                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-2 border-none rounded-sm ">
+                        Groups
+                    </button>
+                  </Link>
+                  <Separator orientation="vertical" />
+                </>
+              }
+              <LeaderBoards/>
+            </div>
+          </div>
           <SearchBar />
           {session ?
             <div className="flex gap-4">
