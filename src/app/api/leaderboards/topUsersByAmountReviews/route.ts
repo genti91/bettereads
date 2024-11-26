@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 
-export const getTopUsersByAmountReviews = async () => {
+export async function GET () {
     const MAX_AMOUNT_REVIEWS = 5;
   
     const query = await prisma.review.groupBy({
@@ -34,5 +34,3 @@ export const getTopUsersByAmountReviews = async () => {
 
     return new Response(JSON.stringify(top_users), { status: 200 });
 };
-
-export { getTopUsersByAmountReviews as GET };
