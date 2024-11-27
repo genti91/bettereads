@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { BookAction } from "@prisma/client";
 
 interface Filters {
     title?: {
@@ -65,6 +66,14 @@ export async function POST(req: Request) {
     const genres = body.genres.map((genreName: string) => ({
         name: genreName
     }));
+    await prisma.bookHistory.create({
+        data: {
+            userId: body.userId,
+            action: BookAction.CREATE,
+            title: body.title,
+            author: body.author
+        }
+    });
     const book = await prisma.book.create({
         data: {
             ...body,

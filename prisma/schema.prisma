@@ -39,24 +39,25 @@ model Review {
 }
 
 model User {
-  id         String       @id @default(cuid())
-  username   String       @unique
-  password   String
-  books      Book[]       @relation("BookUser")
-  reviews    Review[]
-  shelves    Shelf[]
-  followers  Follows[]    @relation("following")
-  following  Follows[]    @relation("follower")
-  challenges Challenge[]
-  name       String
-  picture    String?
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  Activity   Activity[]
-  groups     Group[]      @relation("GroupUsers")
-  groupId    String?
-  Discussion Discussion[]
-  Comment    Comment[]
+  id          String        @id @default(cuid())
+  username    String        @unique
+  password    String
+  books       Book[]        @relation("BookUser")
+  reviews     Review[]
+  shelves     Shelf[]
+  followers   Follows[]     @relation("following")
+  following   Follows[]     @relation("follower")
+  challenges  Challenge[]
+  bookHistory BookHistory[]
+  name        String
+  picture     String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Activity    Activity[]
+  groups      Group[]       @relation("GroupUsers")
+  groupId     String?
+  Discussion  Discussion[]
+  Comment     Comment[]
 }
 
 model Follows {
@@ -152,4 +153,21 @@ model Comment {
   discussion   Discussion @relation(fields: [discussionId], references: [id])
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+}
+
+enum BookAction {
+  CREATE
+  DELETE
+  UPDATE
+}
+
+model BookHistory {
+  id        String     @id @default(cuid())
+  title     String
+  author    String
+  action    BookAction
+  userId    String
+  User      User       @relation(fields: [userId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }

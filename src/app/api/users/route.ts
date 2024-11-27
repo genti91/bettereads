@@ -44,9 +44,10 @@ export async function GET(req: Request) {
             reviews: {
                 include: { 
                     Book: true,
-                    user: true
+                    user: true,
                 }
-            } 
+            },
+            bookHistory: true, 
         } : null
     });
     return Response.json(users);

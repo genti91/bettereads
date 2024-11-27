@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator"
 import Shelves from "@/components/sections/Shelves";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ReviewCard from "@/components/ReviewCard";
+import ViewHistory from "@/components/ViewHistory";
 
 async function getUserData(userId: string) {
   try {
@@ -61,13 +62,16 @@ export default async function Page() {
         <div className="flex flex-col gap-4 w-2/3">
           <h1 className="text-3xl font-bold">{session.user.name}</h1>
           <Separator />
-          <div className="flex gap-2 flex-wrap">
-            <Link href="/my_books">
-              <Button>My Books</Button>
-            </Link>
-            <Link href="/add_book">
-              <Button>Add Book</Button>
-            </Link>
+          <div className="flex justify-between flex-wrap pr-5">
+            <div className="flex gap-2 flex-wrap">
+              <Link href="/my_books">
+                <Button>My Books</Button>
+              </Link>
+              <Link href="/add_book">
+                <Button>Add Book</Button>
+              </Link>
+            </div>
+            {/* <ViewHistory history={user.bookHistory} /> */}
           </div>
 
           <Separator />
