@@ -24,3 +24,8 @@ export async function revalidateFollows() {
 export async function revalidateGroups() {
     revalidatePath(`/groups`);
 }
+
+export async function revalidateLeaderBoard() {
+  revalidatePath(`/leaderboards`);
+  revalidatePath(`api/leaderboards`);
+}
