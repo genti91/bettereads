@@ -19,7 +19,7 @@ async function getActivity(userId: string) {
 function timeAgo(date: Date): string {
     const now = new Date();
     const diffInMs = now.getTime() - date.getTime();
-    
+
     const seconds = Math.floor(diffInMs / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
@@ -58,7 +58,7 @@ function shelfText(shelfType: string): string {
 export default async function Feed({ userId }: { userId: string }) {
     const activity = await getActivity(userId);
     if (activity.length === 0) {
-        return <></>;
+        return <div className="mr-80"></div>;
     }
     return (
         <>
@@ -73,7 +73,7 @@ export default async function Feed({ userId }: { userId: string }) {
                                         <Link href={`/profile/${item.user.username}`}>
                                             <div className="flex gap-2 items-center">
                                                 <Avatar className="h-9 w-9 bg-slate-200 items-center justify-center hover:bg-slate-100">
-                                                    <AvatarImage src={item.user.picture}/>
+                                                    <AvatarImage src={item.user.picture} />
                                                     <AvatarFallback>{item.user.name[0]}</AvatarFallback>
                                                 </Avatar>
                                                 <p className="font-semibold underline">{item.user.username}</p>

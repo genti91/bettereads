@@ -63,39 +63,41 @@ export default async function GroupsPage({ searchParams }: { searchParams: { [ke
     }
 
     return (
-        <div className="flex px-10 py-10 justify-items-center sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
-            <div className="flex gap-10">
-                <div className="flex flex-col gap-2">
-                    <h1 className="text-xl font-bold">Groups</h1>
-                    <div className="flex flex-col gap-1">
-                    {groups.map((group: Group) => (
-                        <Link href={{query: {group: group.id}}} className="text-nowrap">
-                            {group.name}
-                        </Link>
-                    ))}
-                    <Separator className="mb-2"/>
-                    <CreateGroup userId={session.user.id}/>
+        <div className="flex justify-center">
+            <div className="flex px-10 py-10 justify-items-center sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
+                <div className="flex gap-10">
+                    <div className="flex flex-col gap-2">
+                        <h1 className="text-xl font-bold">Groups</h1>
+                        <div className="flex flex-col gap-1">
+                            {groups.map((group: Group) => (
+                                <Link href={{ query: { group: group.id } }} className="text-nowrap">
+                                    {group.name}
+                                </Link>
+                            ))}
+                            <Separator className="mb-2" />
+                            <CreateGroup userId={session.user.id} />
+                        </div>
                     </div>
+                    <Separator orientation="vertical" />
+                    {!discussion ?
+                        <>
+                            {groups.length > 0 ?
+                                <>
+                                    <Discussions group={group} userId={session.user.id} />
+                                    <Separator orientation="vertical" />
+                                    <GroupSettings group={group} userId={session.user.id} />
+                                </>
+                                :
+                                <div className="flex flex-col gap-2 justify-center">
+                                    <h1 className="text-xl">No groups found</h1>
+                                </div>
+                            }
+                        </>
+                        :
+                        <Discussion discussion={discussion} group={group} userId={session.user.id} />
+                    }
                 </div>
-                <Separator orientation="vertical" />
-                {!discussion ?
-                    <>
-                        {groups.length > 0 ? 
-                            <>
-                                <Discussions group={group} userId={session.user.id} />
-                                <Separator orientation="vertical" />
-                                <GroupSettings group={group} userId={session.user.id}/>
-                            </>
-                            :
-                            <div className="flex flex-col gap-2 justify-center">
-                                <h1 className="text-xl">No groups found</h1>
-                            </div>
-                        }
-                    </>
-                    :
-                    <Discussion discussion={discussion} group={group} userId={session.user.id}/>
-                }
             </div>
-        </div> 
+        </div >
     )
 }
