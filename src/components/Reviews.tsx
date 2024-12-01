@@ -61,14 +61,14 @@ export default async function Reviews({ reviews, bookId }: { reviews: Review[], 
                         </div>
                     }
                     <Tabs defaultValue="All" className="w-[400px]">
-                        <TabsList>
+                        {/* <TabsList>
                             <TabsTrigger value="All">All</TabsTrigger>
                             <TabsTrigger value="Friends">Friends</TabsTrigger>
-                        </TabsList>
+                        </TabsList> */}
                         <TabsContent value="All">
                             <ScrollArea className="h-72 w-[350px] rounded-md p-4">
                                 <div className="flex flex-col gap-4">
-                                    {!reviewsFiltered.length && <h1 className="text-xl font-[500]">This book has no reviews</h1>}
+                                    {(!reviewsFiltered.length && !myReview) && <h1 className="text-xl font-[500]">This book has no reviews</h1>}
                                     {reviewsFiltered.map((review: Review, i: number) => (
                                         <ReviewCard key={i} review={review} />
                                     ))}
