@@ -42,7 +42,7 @@ export default async function Discussions({ group, userId }: { group: Group, use
             <p className="text-lg w-full">{group.description}</p>
             <Separator />
             <div className="flex gap-7 items-center justify-between py-2 min-w-full">
-                <Label className="text-2xl">Discussions:</Label>
+                <Label className="text-2xl">Discussions</Label>
                 <CreateDiscussion groupId={group.id} userId={userId} />
             </div>
             {group.discussions.length === 0 && <p className="text-center text-sm mt-16">No discussions in group</p>}

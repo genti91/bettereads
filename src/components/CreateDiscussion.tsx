@@ -62,7 +62,7 @@ export function CreateDiscussion({ userId, groupId }: { userId: string, groupId:
     return (
         <Dialog open={open} onOpenChange={onDialogChange}>
             <DialogTrigger asChild>
-                <Button className="h-7" disabled>Start Discussion</Button>
+                <Button className="h-7">Start Discussion</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>

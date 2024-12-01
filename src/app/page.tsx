@@ -31,7 +31,7 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   }
   const session = await getServerSession(authOptions);
   return (
-    <div className="flex xl:px-80 px-10 py-10 justify-items-center sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
+    <div className="flex px-10 py-10 justify-items-center sm:px-20 sm:py-10 font-[family-name:var(--font-geist-sans)]">
       <div className="flex gap-10">
         <div className="flex flex-col gap-7">
           <FilterMenu 
