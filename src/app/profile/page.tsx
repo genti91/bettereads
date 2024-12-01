@@ -71,7 +71,7 @@ export default async function Page() {
                 <Button>Add Book</Button>
               </Link>
             </div>
-            {/* <ViewHistory history={user.bookHistory} /> */}
+            <ViewHistory history={user.bookHistory} />
           </div>
 
           <Separator />
