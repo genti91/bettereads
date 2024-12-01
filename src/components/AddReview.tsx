@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { revalidateAll } from "@/lib/actions";
+import { revalidateLeaderBoard, revalidateAll } from "@/lib/actions";
 import { ReviewForm } from "./ReviewForm";
 
 const formSchema = z.object({
@@ -47,6 +47,7 @@ export function AddReveiew({ userId, bookId }: { userId: string, bookId: string 
             form.reset();
             setOpen(false);
             revalidateAll();
+            revalidateLeaderBoard();
         } else {
             toast({
                 variant: "destructive",
