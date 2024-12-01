@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 
-export async function GET () {
+export async function PUT () {
     const MAX_AMOUNT_REVIEWS = 5;
   
     const query = await prisma.review.groupBy({

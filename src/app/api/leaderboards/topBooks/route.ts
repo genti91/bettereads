@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+export async function PUT() {
     const topBooks = await prisma.book.findMany({
         take: 5,
         orderBy: {

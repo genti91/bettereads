@@ -17,8 +17,11 @@ type TopUser = {
 async function getTopUsersByAmountReviews(){
   try {
     const response = await fetch(
-      `${process.env.APP_URL}/api/leaderboards/topUsersByAmountReviews`,
-      { cache: "no-store" }
+      `${process.env.APP_URL}/api/leaderboards/topUsersByAmountReviews`, {
+      cache: "no-store",
+      method: "PUT",
+      next: { revalidate: 0 },
+      }
     );
     
     const top_reviewers = await response.json();
@@ -33,8 +36,11 @@ async function getTopUsersByAmountReviews(){
 async function getTopBooks(){
   try {
     const response = await fetch(
-      `${process.env.APP_URL}/api/leaderboards/topBooks`,
-      { cache: "no-store" }
+      `${process.env.APP_URL}/api/leaderboards/topBooks`,{
+        cache: "no-store",
+        method: "PUT",
+        next: { revalidate: 0 },
+        }
     );
     
     return await response.json();
