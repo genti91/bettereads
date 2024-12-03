@@ -75,7 +75,7 @@ export default async function Books({ pageNumber, maxPerPage, search, shelfId, s
 
     if (books.length === 0) {
         return (
-            <div className="flex justify-center items-center h-96">
+            <div className="flex justify-center items-center h-96 w-[672px]">
                 <h1 className="text-3xl">No books found</h1>
             </div>
         );
