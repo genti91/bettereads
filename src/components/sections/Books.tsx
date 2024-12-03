@@ -84,7 +84,7 @@ export default async function Books({ pageNumber, maxPerPage, search, shelfId, s
     const paginationRange = getPaginationRange();
 
     return (
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-10 max-w-2xl">
             <div>
                 {paginatedBooks.map((book: Book) => (
                     <Link href={`/book/${book.id}`} passHref key={book.id}>
